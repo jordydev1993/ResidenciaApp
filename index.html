@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Residencias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+    #appSidebar.collapsed { width: 64px; }
+    #appSidebar.collapsed .menu-text { display: none; }
+    #appSidebar.collapsed .submenu { display: none !important; }
+    #appSidebar .chevron { transition: transform 0.2s ease; }
+    #appSidebar .chevron.rotated { transform: rotate(90deg); }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex">
+                <!-- Sidebar TailAdmin -->
+                <aside id="appSidebar" class="w-64 bg-white border-r rounded-lg mr-8 p-3 h-[100vh] sticky top-0 overflow-y-auto transition-all">
+                    <!-- Logo del Sistema -->
+                    <div class="mb-6 pb-4 border-b border-gray-200">
+                        <a href="./index.html" class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-house-heart text-white text-xl"></i>
+                            </div>
+                            <div class="menu-text">
+                                <div class="text-lg font-bold text-gray-900">Sistema</div>
+                                <div class="text-xs text-gray-500">Residencias</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="flex items-center justify-between mb-3 px-2">
+                        <span class="text-xs font-semibold text-gray-400 tracking-wider menu-text">MENU</span>
+                        <button class="text-gray-500 hover:text-gray-700" title="Colapsar" onclick="toggleSidebar()">
+                            <i class="bi bi-layout-sidebar-inset"></i>
+                        </button>
+                    </div>
+                    <nav class="space-y-1">
+                        <a href="./dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                            <i class="bi bi-speedometer2 text-xl"></i>
+                            <span class="menu-text">Dashboard</span>
+                        </a>
+                        <a href="./legajos.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                            <i class="bi bi-person-lines-fill text-xl"></i>
+                            <span class="menu-text">Legajos</span>
+                        </a>
+                        <a href="./alertas.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                            <i class="bi bi-bell-fill text-xl"></i>
+                            <span class="menu-text">Alertas</span>
+                        </a>
+                        <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuReportes', this)">
+                            <span class="flex items-center gap-3">
+                                <i class="bi bi-bar-chart-line text-xl"></i>
+                                <span class="menu-text">Reportes</span>
+                            </span>
+                            <i class="bi bi-chevron-right chevron rotated"></i>
+                        </button>
+                        <div id="submenuReportes" class="submenu pl-11 space-y-1">
+                            <a href="./reportes_legajos.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Legajos</a>
+                            <a href="./reportes_alertas.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Alertas</a>
+                            <a href="./dashboard.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Dashboard</a>
+                        </div>
+                        <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuAcceso', this)">
+                            <span class="flex items-center gap-3">
+                                <i class="bi bi-person-circle text-xl"></i>
+                                <span class="menu-text">Acceso</span>
+                            </span>
+                            <i class="bi bi-chevron-right chevron"></i>
+                        </button>
+                        <div id="submenuAcceso" class="submenu pl-11 space-y-1 hidden">
+                            <a href="./auth.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Login/Registro</a>
+                        </div>
+                    </nav>
+                </aside>
+                <div class="flex-1">
+        <!-- Hero -->
+        <section class="py-12 bg-gray-50 border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center">
+                    <div class="flex-1">
+                        <h1 class="text-4xl font-bold text-gray-900 mb-4">Sistema de Gestión de Residencias</h1>
+                        <p class="text-lg text-gray-600 mb-6">Administra legajos, gestiona alertas y visualiza métricas en un único lugar, con una interfaz simple y rápida.</p>
+                        <div class="flex gap-4">
+                            <a class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700" href="./legajos.html"><i class="bi bi-person-lines-fill mr-2"></i>Gestionar Legajos</a>
+                            <a class="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50" href="./alertas.html"><i class="bi bi-bell-fill mr-2"></i>Ver Alertas</a>
+                            <a class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50" href="./auth.html"><i class="bi bi-person-circle mr-2"></i>Iniciar Sesión</a>
+                        </div>
+                    </div>
+                    <div class="ml-8">
+                        <div class="bg-white shadow-lg rounded-lg p-6">
+                            <h5 class="text-lg font-semibold mb-4"><i class="bi bi-graph-up-arrow mr-2"></i>Indicadores clave</h5>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-2xl font-bold">—</div>
+                                    <small class="text-gray-500">Legajos</small>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold">—</div>
+                                    <small class="text-gray-500">Alertas</small>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold">—</div>
+                                    <small class="text-gray-500">Completadas</small>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-sm text-gray-500">Conéctate al backend para ver datos en vivo.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white shadow-lg rounded-lg p-6">
+                        <h5 class="text-lg font-semibold mb-3"><i class="bi bi-shield-check mr-2"></i>Legajos centralizados</h5>
+                        <p class="text-gray-600">Carga y consulta de legajos con validaciones y filtros rápidos.</p>
+                    </div>
+                    <div class="bg-white shadow-lg rounded-lg p-6">
+                        <h5 class="text-lg font-semibold mb-3"><i class="bi bi-bell mr-2"></i>Alertas con prioridades</h5>
+                        <p class="text-gray-600">Crea alertas, define vencimientos y prioriza tareas críticas.</p>
+                    </div>
+                    <div class="bg-white shadow-lg rounded-lg p-6">
+                        <h5 class="text-lg font-semibold mb-3"><i class="bi bi-bar-chart-line mr-2"></i>Dashboard</h5>
+                        <p class="text-gray-600">Gráficos claros para entender el estado del sistema de un vistazo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="py-12 bg-blue-600 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-semibold mb-4">Comienza ahora</h2>
+                <p class="text-lg mb-6">Accede con tu cuenta o crea una nueva para empezar a gestionar.</p>
+                <a class="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 mr-4" href="./auth.html">Iniciar Sesión</a>
+                <a class="border border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700" href="./legajos.html">Ir a Legajos</a>
+            </div>
+        </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-8 border-t bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <span class="text-gray-500">© Sistema de Residencias</span>
+            <div class="flex gap-6">
+                <a href="./alertas.html" class="text-gray-500 hover:text-gray-700">Alertas</a>
+                <a href="./dashboard.html" class="text-gray-500 hover:text-gray-700">Dashboard</a>
+                <a href="./reportes_legajos.html" class="text-gray-500 hover:text-gray-700">Reportes Legajos</a>
+                <a href="./reportes_alertas.html" class="text-gray-500 hover:text-gray-700">Reportes Alertas</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('collapsed'); }
+        function toggleSubmenu(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.toggle('hidden');
+            const icon = btn && btn.querySelector('.chevron');
+            if (icon) icon.classList.toggle('rotated');
+        }
+    </script>
+</body>
+</html>

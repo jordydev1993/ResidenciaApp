@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes de Alertas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+    <script type="module" src="assets/js/reportes/alertasPage.js" defer></script>
+    <style>
+    #appSidebar.collapsed { width: 64px; }
+    #appSidebar.collapsed .menu-text { display: none; }
+    #appSidebar.collapsed .submenu { display: none !important; }
+    #appSidebar .chevron { transition: transform 0.2s ease; }
+    #appSidebar .chevron.rotated { transform: rotate(90deg); }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex">
+            <!-- Sidebar TailAdmin -->
+            <aside id="appSidebar" class="w-64 bg-white border-r rounded-lg mr-8 p-3 h-[100vh] sticky top-0 overflow-y-auto transition-all">
+                <!-- Logo del Sistema -->
+                <div class="mb-6 pb-4 border-b border-gray-200">
+                    <a href="./index.html" class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-house-heart text-white text-xl"></i>
+                        </div>
+                        <div class="menu-text">
+                            <div class="text-lg font-bold text-gray-900">Sistema</div>
+                            <div class="text-xs text-gray-500">Residencias</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="flex items-center justify-between mb-3 px-2">
+                    <span class="text-xs font-semibold text-gray-400 tracking-wider menu-text">MENU</span>
+                    <button class="text-gray-500 hover:text-gray-700" title="Colapsar" onclick="toggleSidebar()">
+                        <i class="bi bi-layout-sidebar-inset"></i>
+                    </button>
+                </div>
+                <nav class="space-y-1">
+                    <a href="./dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-speedometer2 text-xl"></i>
+                        <span class="menu-text">Dashboard</span>
+                    </a>
+                    <a href="./legajos.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-person-lines-fill text-xl"></i>
+                        <span class="menu-text">Legajos</span>
+                    </a>
+                    <a href="./alertas.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-bell-fill text-xl"></i>
+                        <span class="menu-text">Alertas</span>
+                    </a>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuReportes', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-bar-chart-line text-xl"></i>
+                            <span class="menu-text">Reportes</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron rotated"></i>
+                    </button>
+                    <div id="submenuReportes" class="submenu pl-11 space-y-1">
+                        <a href="./reportes_legajos.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Legajos</a>
+                        <a href="./reportes_alertas.html" class="block px-3 py-2 rounded-md bg-blue-50 text-blue-700">Reportes de Alertas</a>
+                        <a href="./dashboard.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Dashboard</a>
+                    </div>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuAcceso', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-person-circle text-xl"></i>
+                            <span class="menu-text">Acceso</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </button>
+                    <div id="submenuAcceso" class="submenu pl-11 space-y-1 hidden">
+                        <a href="./auth.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Login/Registro</a>
+                    </div>
+                </nav>
+            </aside>
+            <div class="flex-1">
+                <div class="flex items-center justify-between mb-6">
+                    <h1 class="text-2xl font-bold"><i class="bi bi-clipboard-data mr-2"></i>Reportes de Alertas</h1>
+                    <div class="flex gap-2">
+                        <button id="btnFiltrar" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"><i class="bi bi-funnel mr-1"></i>Filtrar</button>
+                        <button id="btnExportPdf" class="border border-red-600 text-red-600 px-4 py-2 rounded-md hover:bg-red-50"><i class="bi bi-filetype-pdf mr-1"></i>PDF</button>
+                        <button id="btnExportExcel" class="border border-green-600 text-green-600 px-4 py-2 rounded-md hover:bg-green-50"><i class="bi bi-filetype-xlsx mr-1"></i>Excel</button>
+                    </div>
+                </div>
+
+                <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                            <select id="fTipo" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="">Todos</option>
+                                <option>Médica</option>
+                                <option>Judicial</option>
+                                <option>Educativa</option>
+                                <option>General</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Prioridad</label>
+                            <select id="fPrioridad" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="">Todas</option>
+                                <option>Alta</option>
+                                <option>Media</option>
+                                <option>Baja</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                            <select id="fEstado" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="">Todos</option>
+                                <option>Pendiente</option>
+                                <option>Completada</option>
+                                <option>Vencida</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white shadow-lg rounded-lg" style="height: 360px;">
+                        <div class="px-6 py-3 border-b bg-gray-50 font-medium">Alertas por estado</div>
+                        <div class="p-4"><canvas id="chart-estado"></canvas></div>
+                    </div>
+                    <div class="bg-white shadow-lg rounded-lg" style="height: 360px;">
+                        <div class="px-6 py-3 border-b bg-gray-50 font-medium">Alertas por prioridad</div>
+                        <div class="p-4"><canvas id="chart-prioridad"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200" id="tablaReportesAlertas">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vencimiento</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioridad</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('collapsed'); }
+        function toggleSubmenu(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.toggle('hidden');
+            const icon = btn && btn.querySelector('.chevron');
+            if (icon) icon.classList.toggle('rotated');
+        }
+    </script>
+</body>
+</html>
+
+

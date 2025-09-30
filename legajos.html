@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Legajos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="assets/js/legajos/page.js" defer></script>
+    <style>
+    /* Comportamiento de colapso para el sidebar estilo TailAdmin */
+    #appSidebar.collapsed { width: 64px; }
+    #appSidebar.collapsed .menu-text { display: none; }
+    #appSidebar.collapsed .submenu { display: none !important; }
+    #appSidebar .chevron { transition: transform 0.2s ease; }
+    #appSidebar .chevron.rotated { transform: rotate(90deg); }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex">
+            <!-- Sidebar estilo TailAdmin -->
+            <aside id="appSidebar" class="w-64 bg-white border-r rounded-lg mr-8 p-3 h-[100vh] sticky top-0 overflow-y-auto transition-all">
+                <!-- Logo del Sistema -->
+                <div class="mb-6 pb-4 border-b border-gray-200">
+                    <a href="./index.html" class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-house-heart text-white text-xl"></i>
+                        </div>
+                        <div class="menu-text">
+                            <div class="text-lg font-bold text-gray-900">Sistema</div>
+                            <div class="text-xs text-gray-500">Residencias</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="flex items-center justify-between mb-3 px-2">
+                    <span class="text-xs font-semibold text-gray-400 tracking-wider menu-text">MENU</span>
+                    <button class="text-gray-500 hover:text-gray-700" title="Colapsar" onclick="toggleSidebar()">
+                        <i class="bi bi-layout-sidebar-inset"></i>
+                    </button>
+                </div>
+                <nav class="space-y-1">
+                    <a href="./dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-speedometer2 text-xl"></i>
+                        <span class="menu-text">Dashboard</span>
+                    </a>
+                    <a href="./legajos.html" class="flex items-center gap-3 px-3 py-2 rounded-md bg-blue-50 text-blue-700">
+                        <i class="bi bi-person-lines-fill text-xl"></i>
+                        <span class="menu-text">Legajos</span>
+                    </a>
+                    <a href="./alertas.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-bell-fill text-xl"></i>
+                        <span class="menu-text">Alertas</span>
+                    </a>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuReportes', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-bar-chart-line text-xl"></i>
+                            <span class="menu-text">Reportes</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron rotated"></i>
+                    </button>
+                    <div id="submenuReportes" class="submenu pl-11 space-y-1">
+                        <a href="./reportes_legajos.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Legajos</a>
+                        <a href="./reportes_alertas.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Alertas</a>
+                        <a href="./dashboard.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Dashboard</a>
+                    </div>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuAcceso', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-person-circle text-xl"></i>
+                            <span class="menu-text">Acceso</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </button>
+                    <div id="submenuAcceso" class="submenu pl-11 space-y-1 hidden">
+                        <a href="./auth.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Login/Registro</a>
+                    </div>
+                </nav>
+
+                <div class="mt-6 px-2">
+                    <span class="text-xs font-semibold text-gray-400 tracking-wider menu-text">OTROS</span>
+                </div>
+                <nav class="mt-2 space-y-1">
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-gear"></i>
+                        <span class="menu-text">Ajustes</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <div class="flex-1">
+                <h1 class="text-2xl font-bold mb-6"><i class="bi bi-person-lines-fill mr-2"></i>Gestión de Legajos</h1>
+                <form id="legajoForm" class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6" novalidate>
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">DNI *</label>
+                        <input class="w-full border border-gray-300 rounded-md px-3 py-2" name="dni" required>
+                    </div>
+                    <div class="md:col-span-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre y Apellido *</label>
+                        <input class="w-full border border-gray-300 rounded-md px-3 py-2" name="nombre" required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nacimiento *</label>
+                        <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2" name="fechaNacimiento" required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ingreso *</label>
+                        <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2" name="fechaIngreso" required>
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
+                        <select class="w-full border border-gray-300 rounded-md px-3 py-2" name="estado" required>
+                            <option value="">Seleccionar</option>
+                            <option>Activo</option>
+                            <option>Egresado</option>
+                            <option>En seguimiento</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tutor</label>
+                        <input class="w-full border border-gray-300 rounded-md px-3 py-2" name="tutor">
+                    </div>
+                    <div class="md:col-span-12">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                        <textarea class="w-full border border-gray-300 rounded-md px-3 py-2" name="observaciones" rows="2"></textarea>
+                    </div>
+                    <div class="md:col-span-12">
+                        <button class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">Guardar</button>
+                    </div>
+                </form>
+
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <div class="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
+                        <h5 class="text-lg font-semibold"><i class="bi bi-table mr-2"></i>Legajos Registrados</h5>
+                        <div class="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                            <span class="px-3 text-gray-500"><i class="bi bi-search"></i></span>
+                            <input type="text" class="px-3 py-2 outline-none" id="busquedaLegajos" placeholder="Buscar por DNI o nombre...">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DNI</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ingreso</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaLegajos" class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toastNotificacion" class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg border hidden z-50">
+        <div class="flex items-center p-4">
+            <i class="bi bi-info-circle-fill text-blue-500 mr-2"></i>
+            <div class="flex-1">
+                <div class="font-semibold">Sistema</div>
+                <div id="toastMensaje" class="text-sm text-gray-600"></div>
+            </div>
+            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600" onclick="hideToast()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function hideToast() { document.getElementById('toastNotificacion').classList.add('hidden'); }
+        function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('collapsed'); }
+        function toggleSubmenu(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.toggle('hidden');
+            const icon = btn && btn.querySelector('.chevron');
+            if (icon) icon.classList.toggle('rotated');
+        }
+    </script>
+</body>
+</html>
+
+

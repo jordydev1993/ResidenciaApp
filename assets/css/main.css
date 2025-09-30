@@ -1,0 +1,44 @@
+/* Estilos generales del frontend modular (neutros, compatibles con Tailwind) */
+
+:root {
+    --spacing: 1rem;
+}
+
+.container-narrow {
+    max-width: 960px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1.5rem 0;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+}
+
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: #6b7280; /* gray-500 */
+}
+
+/* Sidebar layout (ajustado para Tailwind navbar de 64px) */
+.sidebar {
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+}
+
+

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Alertas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script type="module" src="assets/js/alertas/page.js" defer></script>
+    <style>
+    #appSidebar.collapsed { width: 64px; }
+    #appSidebar.collapsed .menu-text { display: none; }
+    #appSidebar.collapsed .submenu { display: none !important; }
+    #appSidebar .chevron { transition: transform 0.2s ease; }
+    #appSidebar .chevron.rotated { transform: rotate(90deg); }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex">
+            <!-- Sidebar TailAdmin -->
+            <aside id="appSidebar" class="w-64 bg-white border-r rounded-lg mr-8 p-3 h-[100vh] sticky top-0 overflow-y-auto transition-all">
+                <!-- Logo del Sistema -->
+                <div class="mb-6 pb-4 border-b border-gray-200">
+                    <a href="./index.html" class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-house-heart text-white text-xl"></i>
+                        </div>
+                        <div class="menu-text">
+                            <div class="text-lg font-bold text-gray-900">Sistema</div>
+                            <div class="text-xs text-gray-500">Residencias</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="flex items-center justify-between mb-3 px-2">
+                    <span class="text-xs font-semibold text-gray-400 tracking-wider menu-text">MENU</span>
+                    <button class="text-gray-500 hover:text-gray-700" title="Colapsar" onclick="toggleSidebar()">
+                        <i class="bi bi-layout-sidebar-inset"></i>
+                    </button>
+                </div>
+                <nav class="space-y-1">
+                    <a href="./dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-speedometer2 text-xl"></i>
+                        <span class="menu-text">Dashboard</span>
+                    </a>
+                    <a href="./legajos.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-person-lines-fill text-xl"></i>
+                        <span class="menu-text">Legajos</span>
+                    </a>
+                    <a href="./alertas.html" class="flex items-center gap-3 px-3 py-2 rounded-md bg-blue-50 text-blue-700">
+                        <i class="bi bi-bell-fill text-xl"></i>
+                        <span class="menu-text">Alertas</span>
+                    </a>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuReportes', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-bar-chart-line text-xl"></i>
+                            <span class="menu-text">Reportes</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron rotated"></i>
+                    </button>
+                    <div id="submenuReportes" class="submenu pl-11 space-y-1">
+                        <a href="./reportes_legajos.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Legajos</a>
+                        <a href="./reportes_alertas.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Alertas</a>
+                        <a href="./dashboard.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Dashboard</a>
+                    </div>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuAcceso', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-person-circle text-xl"></i>
+                            <span class="menu-text">Acceso</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </button>
+                    <div id="submenuAcceso" class="submenu pl-11 space-y-1 hidden">
+                        <a href="./auth.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Login/Registro</a>
+                    </div>
+                </nav>
+            </aside>
+            <div class="flex-1">
+        <h1 class="text-2xl font-bold mb-6"><i class="bi bi-bell-fill mr-2"></i>Gestión de Alertas</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-red-500 text-white rounded-lg p-6 text-center">
+                <i class="bi bi-exclamation-triangle-fill text-4xl"></i>
+                <h5 class="text-lg font-semibold mt-2">Alertas del Día</h5>
+                <h3 class="text-3xl font-bold" id="alertasHoy">0</h3>
+            </div>
+            <div class="bg-yellow-500 text-white rounded-lg p-6 text-center">
+                <i class="bi bi-clock-fill text-4xl"></i>
+                <h5 class="text-lg font-semibold mt-2">Próximas</h5>
+                <h3 class="text-3xl font-bold" id="alertasProximas">0</h3>
+            </div>
+            <div class="bg-blue-500 text-white rounded-lg p-6 text-center">
+                <i class="bi bi-list-check text-4xl"></i>
+                <h5 class="text-lg font-semibold mt-2">Total</h5>
+                <h3 class="text-3xl font-bold" id="totalAlertas">0</h3>
+            </div>
+            <div class="bg-green-500 text-white rounded-lg p-6 text-center">
+                <i class="bi bi-check-circle-fill text-4xl"></i>
+                <h5 class="text-lg font-semibold mt-2">Completadas</h5>
+                <h3 class="text-3xl font-bold" id="alertasCompletadas">0</h3>
+            </div>
+        </div>
+
+        <div class="flex gap-6 mb-8">
+            <div class="flex-1">
+                <div class="bg-white shadow-lg rounded-lg p-6">
+                    <h6 class="text-lg font-semibold mb-4">Filtros</h6>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <select class="border border-gray-300 rounded-md px-3 py-2" id="filtroTipo">
+                            <option value="">Todos los tipos</option>
+                            <option value="Médica">Médica</option>
+                            <option value="Judicial">Judicial</option>
+                            <option value="Educativa">Educativa</option>
+                            <option value="General">General</option>
+                        </select>
+                        <select class="border border-gray-300 rounded-md px-3 py-2" id="filtroPrioridad">
+                            <option value="">Todas las prioridades</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Media">Media</option>
+                            <option value="Baja">Baja</option>
+                        </select>
+                        <button class="border border-blue-600 text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50" id="btnFiltrar">
+                            <i class="bi bi-funnel mr-1"></i>Filtrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-shrink-0">
+                <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700" onclick="toggleModal('modalNuevaAlerta')">
+                    <i class="bi bi-plus-circle mr-2"></i>Nueva Alerta
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b">
+                <h5 class="text-lg font-semibold"><i class="bi bi-list-ul mr-2"></i>Lista de Alertas</h5>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioridad</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vencimiento</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaAlertas" class="bg-white divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+        </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Alerta -->
+    <div id="modalNuevaAlerta" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="flex items-center justify-between p-6 border-b">
+                    <h5 class="text-lg font-semibold"><i class="bi bi-plus-circle mr-2"></i>Nueva Alerta</h5>
+                    <button type="button" class="text-gray-400 hover:text-gray-600" onclick="toggleModal('modalNuevaAlerta')">
+                        <i class="bi bi-x-lg text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <form id="alertaForm" novalidate>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo *</label>
+                            <select class="w-full border border-gray-300 rounded-md px-3 py-2" name="tipoAlerta" required>
+                                <option value="">Seleccionar</option>
+                                <option>Médica</option>
+                                <option>Judicial</option>
+                                <option>Educativa</option>
+                                <option>General</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción *</label>
+                            <textarea class="w-full border border-gray-300 rounded-md px-3 py-2" name="descripcionAlerta" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vencimiento *</label>
+                            <input type="datetime-local" class="w-full border border-gray-300 rounded-md px-3 py-2" name="fechaVencimiento" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Prioridad *</label>
+                            <select class="w-full border border-gray-300 rounded-md px-3 py-2" name="prioridadAlerta" required>
+                                <option value="">Seleccionar</option>
+                                <option>Alta</option>
+                                <option>Media</option>
+                                <option>Baja</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="flex justify-end gap-3 p-6 border-t">
+                    <button type="button" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" onclick="toggleModal('modalNuevaAlerta')">Cancelar</button>
+                    <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onclick="document.getElementById('alertaForm').requestSubmit()">
+                        <i class="bi bi-check-circle mr-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastNotificacion" class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg border hidden z-50">
+        <div class="flex items-center p-4">
+            <i class="bi bi-info-circle-fill text-blue-500 mr-2"></i>
+            <div class="flex-1">
+                <div class="font-semibold">Sistema</div>
+                <div id="toastMensaje" class="text-sm text-gray-600"></div>
+            </div>
+            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600" onclick="hideToast()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.toggle('hidden');
+        }
+        function hideToast() {
+            const toast = document.getElementById('toastNotificacion');
+            toast.classList.add('hidden');
+        }
+        function showToast(message) {
+            const toast = document.getElementById('toastNotificacion');
+            const messageEl = document.getElementById('toastMensaje');
+            messageEl.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => hideToast(), 5000);
+        }
+        function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('collapsed'); }
+        function toggleSubmenu(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.toggle('hidden');
+            const icon = btn && btn.querySelector('.chevron');
+            if (icon) icon.classList.toggle('rotated');
+        }
+    </script>
+</body>
+</html>
+
+
