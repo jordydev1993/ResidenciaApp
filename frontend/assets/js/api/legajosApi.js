@@ -8,4 +8,6 @@ export const createLegajo = (data) => http(BASE, { method: 'POST', body: JSON.st
 export const searchLegajos = (q) => http(`${BASE}/search${buildQuery({ q })}`, { method: 'GET' });
 export const reportesLegajos = (params = {}) => http(`${BASE}/reportes${buildQuery(params)}`, { method: 'GET' });
 
+export const listEstados = () => http('/api/Estado', { method: 'GET' });
+
 
