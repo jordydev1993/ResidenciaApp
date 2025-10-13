@@ -19,9 +19,10 @@ namespace WebApi.Models
         #region Propiedades
         public int Id { get; set; }
         public int TipoId { get; set; }
+        public int LegajoId { get; set; }
         public string Descripcion { get; set; }
-        public DateTime FechaVencimiento { get; set; }
-        public int PrioridadId { get; set; }
+        public DateTime? FechaVencimiento { get; set; }
+        public int? PrioridadId { get; set; }
         public int EstadoId { get; set; }
         #endregion
 
@@ -47,7 +48,7 @@ namespace WebApi.Models
         }
 
         // 2. Guardar nueva alerta
-        public void Guardar()
+        public int Guardar()
         {
             using (SqlConnection conn = db.GetConnection())
             {
@@ -55,19 +56,22 @@ namespace WebApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.Add("@TipoId", SqlDbType.Int).Value = TipoId;
-                cmd.Parameters.Add("@Descripcion", SqlDbType.NVarChar).Value = Descripcion;
-                cmd.Parameters.Add("@FechaVencimiento", SqlDbType.DateTime2).Value = FechaVencimiento;
-                cmd.Parameters.Add("@PrioridadId", SqlDbType.Int).Value = PrioridadId;
+                cmd.Parameters.Add("@PrioridadId", SqlDbType.Int).Value = PrioridadId.HasValue ? (object)PrioridadId.Value : DBNull.Value;
                 cmd.Parameters.Add("@EstadoId", SqlDbType.Int).Value = EstadoId;
+                cmd.Parameters.Add("@LegajoId", SqlDbType.Int).Value = LegajoId;
+                cmd.Parameters.Add("@Descripcion", SqlDbType.NVarChar, 500).Value = (object)Descripcion ?? DBNull.Value;
+                cmd.Parameters.Add("@FechaVencimiento", SqlDbType.DateTime2).Value = FechaVencimiento.HasValue ? (object)FechaVencimiento.Value : DBNull.Value;
 
                 conn.Open();
-                cmd.ExecuteNonQuery();
+                var result = cmd.ExecuteScalar();
                 conn.Close();
+                Id = Convert.ToInt32(result);
+                return Id;
             }
         }
 
         // 3. Actualizar alerta
-        public void Actualizar()
+        public int Actualizar()
         {
             using (SqlConnection conn = db.GetConnection())
             {
@@ -76,10 +80,14 @@ namespace WebApi.Models
 
                 cmd.Parameters.Add("@Id", SqlDbType.Int).Value = Id;
                 cmd.Parameters.Add("@EstadoId", SqlDbType.Int).Value = EstadoId;
+                cmd.Parameters.Add("@PrioridadId", SqlDbType.Int).Value = PrioridadId.HasValue ? (object)PrioridadId.Value : DBNull.Value;
+                cmd.Parameters.Add("@Descripcion", SqlDbType.NVarChar, 500).Value = (object)Descripcion ?? DBNull.Value;
+                cmd.Parameters.Add("@FechaVencimiento", SqlDbType.DateTime2).Value = FechaVencimiento.HasValue ? (object)FechaVencimiento.Value : DBNull.Value;
 
                 conn.Open();
-                cmd.ExecuteNonQuery();
+                var rows = cmd.ExecuteNonQuery();
                 conn.Close();
+                return rows;
             }
         }
 

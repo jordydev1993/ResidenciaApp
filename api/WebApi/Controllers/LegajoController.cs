@@ -42,12 +42,21 @@ namespace WebApi.Controllers
         {
             try
             {
+                if (value == null)
+                    return BadRequest("Payload requerido");
+                if (value.NinoId <= 0)
+                    return BadRequest("NinoId requerido");
+                if (value.EstadoId <= 0)
+                    return BadRequest("EstadoId requerido");
+                if (value.FechaIngreso == default(DateTime))
+                    return BadRequest("FechaIngreso requerida");
+
                 Legajo oLegajo = new Legajo
                 {
-                    DNI = value.DNI,
+                    NinoId = value.NinoId,
                     FechaIngreso = value.FechaIngreso,
                     EstadoId = value.EstadoId,
-                    TutorAsignado = value.TutorAsignado,
+                    TutorId = value.TutorId,
                     Observaciones = value.Observaciones
                 };
 
@@ -71,7 +80,7 @@ namespace WebApi.Controllers
                 {
                     Id = id,
                     EstadoId = value.EstadoId,
-                    TutorAsignado = value.TutorAsignado,
+                    TutorId = value.TutorId,
                     Observaciones = value.Observaciones
                 };
 
@@ -92,13 +101,14 @@ namespace WebApi.Controllers
             try
             {
                 Legajo oLegajo = new Legajo { Id = id };
-                oLegajo.Eliminar(); // necesitas implementar este método con SP_Legajo_Delete
+                oLegajo.Eliminar();
 
-                return Ok($"Legajo con Id={id} eliminado correctamente");
+                return Ok(new { message = $"Legajo con Id={id} eliminado correctamente" });
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                // Devolver error en formato JSON con mensaje legible
+                return Content(System.Net.HttpStatusCode.BadRequest, new { error = ex.Message });
             }
         }
     }

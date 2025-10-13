@@ -26,23 +26,40 @@ export function bindLegajoForm(onCreated) {
         const error = validate(payload);
         if (error) { showToast(error); return; }
         try {
+            // Separar nombre completo en nombre y apellido si es necesario
+            const nombreCompleto = String(payload.nombre).trim();
+            const partesNombre = nombreCompleto.split(' ');
+            const apellido = partesNombre.length > 1 ? partesNombre.pop() : nombreCompleto;
+            const nombre = partesNombre.length > 0 ? partesNombre.join(' ') : nombreCompleto;
+            
             // Upsert Nino antes de crear el Legajo (satisface FK DNI)
             await upsertNino({
                 DNI: String(payload.dni).trim(),
-                NombreCompleto: String(payload.nombre).trim(),
+                Nombre: nombre,
+                Apellido: apellido,
                 FechaNacimiento: payload.fechaNacimiento
             });
 
             const estadoId = Number(payload.estadoId || mapEstadoNombreToId(payload.estado));
             if (!estadoId || Number.isNaN(estadoId)) { showToast('Estado inválido'); return; }
 
+            // Buscar el NinoId consultando el backend de Nino por DNI no está implementado.
+            // El SP de legajo requiere NinoId, por lo que aquí asumimos que el backend
+            // resolverá NinoId a partir del DNI si recibe el DNI. Si no, deberíamos
+            // agregar un endpoint para obtener NinoId por DNI. Temporalmente usamos
+            // un cuerpo compatible con el backend actual: incluye NinoId si está presente.
+
             const body = {
-                DNI: payload.dni ? String(payload.dni).trim() : '',
                 FechaIngreso: payload.fechaIngreso,
                 EstadoId: estadoId,
-                TutorAsignado: payload.tutor && String(payload.tutor).trim() ? String(payload.tutor).trim() : null,
+                TutorId: payload.tutorId ? Number(payload.tutorId) : null,
                 Observaciones: payload.observaciones && String(payload.observaciones).trim() ? String(payload.observaciones).trim() : null,
             };
+
+            // Si el formulario incluye ninoId oculto/derivado, adjuntarlo
+            if (payload.ninoId) {
+                body.NinoId = Number(payload.ninoId);
+            }
 
             await createLegajo(body);
             form.reset();

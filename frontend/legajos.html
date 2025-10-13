@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Legajos</title>
+    <title>Registrar Legajos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/tooltips.css">
     <link rel="stylesheet" href="styles.css">
     <script type="module" src="assets/js/legajos/page.js" defer></script>
     <style>
@@ -76,6 +77,21 @@
                     <div id="submenuAcceso" class="submenu pl-11 space-y-1 hidden">
                         <a href="./auth.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Login/Registro</a>
                     </div>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuCatalogos', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-collection text-xl"></i>
+                            <span class="menu-text">Configuraciones</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </button>
+                    <div id="submenuCatalogos" class="submenu pl-11 space-y-1 hidden">
+                        <a href="./ninos.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Niños</a>
+                        <a href="./estados.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Estados</a>
+                        <a href="./tutores.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Tutores</a>
+                        <a href="./tipo-alerta.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Tipo Alerta</a>
+                        <a href="./prioridad.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Prioridad</a>
+                        <a href="./estado-alerta.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Estado Alerta</a>
+                    </div>
                 </nav>
 
                 <div class="mt-6 px-2">
@@ -90,67 +106,362 @@
             </aside>
 
             <div class="flex-1">
-                <h1 class="text-2xl font-bold mb-6"><i class="bi bi-person-lines-fill mr-2"></i>Gestión de Legajos</h1>
-                <form id="legajoForm" class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6" novalidate>
-                    <div class="md:col-span-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">DNI *</label>
-                        <input class="w-full border border-gray-300 rounded-md px-3 py-2" name="dni" required>
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">
+                            <i class="bi bi-person-lines-fill mr-2 text-blue-600"></i>Gestión de Legajos
+                        </h1>
+                        <p class="text-sm text-gray-600 mt-1">Administración de legajos de niños, niñas y adolescentes</p>
                     </div>
-                    <div class="md:col-span-5">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre y Apellido *</label>
-                        <input class="w-full border border-gray-300 rounded-md px-3 py-2" name="nombre" required>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nacimiento *</label>
-                        <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2" name="fechaNacimiento" required>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ingreso *</label>
-                        <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2" name="fechaIngreso" required>
-                    </div>
-                    <div class="md:col-span-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
-                        <select class="w-full border border-gray-300 rounded-md px-3 py-2" name="estadoId" required>
-                            <option value="">Seleccionar</option>
-                            <option value="1">Activo</option>
-                            <option value="2">Egresado</option>
-                            <option value="3">En seguimiento</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tutor</label>
-                        <input class="w-full border border-gray-300 rounded-md px-3 py-2" name="tutor">
-                    </div>
-                    <div class="md:col-span-12">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
-                        <textarea class="w-full border border-gray-300 rounded-md px-3 py-2" name="observaciones" rows="2"></textarea>
-                    </div>
-                    <div class="md:col-span-12">
-                        <button class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">Guardar</button>
-                    </div>
-                </form>
+                    <button id="btnNuevoLegajo" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-green-800 shadow-lg transition-all flex items-center gap-2">
+                        <i class="bi bi-plus-circle-fill"></i> Nuevo Legajo
+                    </button>
+                </div>
 
-                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                    <div class="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
-                        <h5 class="text-lg font-semibold"><i class="bi bi-table mr-2"></i>Legajos Registrados</h5>
-                        <div class="flex items-center border border-gray-300 rounded-md overflow-hidden">
-                            <span class="px-3 text-gray-500"><i class="bi bi-search"></i></span>
-                            <input type="text" class="px-3 py-2 outline-none" id="busquedaLegajos" placeholder="Buscar por DNI o nombre...">
+                <!-- KPIs Rápidos -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-4 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100 text-xs font-medium mb-1">Total Legajos</p>
+                                <h3 class="text-3xl font-bold" id="totalLegajos">0</h3>
+                            </div>
+                            <div class="bg-blue-400 bg-opacity-30 rounded-full p-3">
+                                <i class="bi bi-file-earmark-person text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-4 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100 text-xs font-medium mb-1">Activos</p>
+                                <h3 class="text-3xl font-bold" id="legajosActivos">0</h3>
+                            </div>
+                            <div class="bg-green-400 bg-opacity-30 rounded-full p-3">
+                                <i class="bi bi-check-circle-fill text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-gray-500 to-gray-600 text-white rounded-xl p-4 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-100 text-xs font-medium mb-1">Egresados</p>
+                                <h3 class="text-3xl font-bold" id="legajosEgresados">0</h3>
+                            </div>
+                            <div class="bg-gray-400 bg-opacity-30 rounded-full p-3">
+                                <i class="bi bi-box-arrow-right text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-4 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100 text-xs font-medium mb-1">Con Tutor</p>
+                                <h3 class="text-3xl font-bold" id="legajosConTutor">0</h3>
+                            </div>
+                            <div class="bg-purple-400 bg-opacity-30 rounded-full p-3">
+                                <i class="bi bi-person-badge-fill text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros Mejorados -->
+                <div class="bg-white shadow-lg rounded-xl p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            <i class="bi bi-funnel mr-2 text-gray-600"></i>Filtros de Búsqueda
+                        </h3>
+                        <button id="btnLimpiarFiltros" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+                            <i class="bi bi-x-circle"></i> Limpiar filtros
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-flag-fill text-indigo-600 mr-1"></i>Estado
+                            </label>
+                            <select id="filtroEstado" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                <option value="">Todos los estados</option>
+                                <option value="activo">✓ Activos</option>
+                                <option value="egresado">✗ Egresados</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-card-text text-blue-600 mr-1"></i>DNI
+                            </label>
+                            <input type="text" id="filtroDni" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Ej: 12345678">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-person-fill text-green-600 mr-1"></i>Nombre
+                            </label>
+                            <input type="text" id="filtroNombre" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Buscar por nombre">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-person-badge text-purple-600 mr-1"></i>Tutor
+                            </label>
+                            <input type="text" id="filtroTutor" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Buscar por tutor">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Registro (ahora oculto, se mostrará en modal) -->
+                <div id="modalLegajo" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                        <div class="sticky top-0 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-4 rounded-t-2xl">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-white bg-opacity-20 rounded-lg p-2">
+                                        <i class="bi bi-file-earmark-plus-fill text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-xl font-bold" id="modalTitle">Registrar Legajo</h5>
+                                        <p class="text-green-100 text-sm">Ingrese los datos del legajo</p>
+                                    </div>
+                                </div>
+                                <button type="button" id="btnCerrarModal" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors">
+                                    <i class="bi bi-x-lg text-2xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                    <form id="legajoForm" class="p-6 space-y-5" novalidate>
+                        <input type="hidden" name="id">
+                        
+                        <!-- Buscador de Niño -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-sm font-semibold text-gray-700">
+                                    <i class="bi bi-person-fill text-blue-600 mr-1"></i>Seleccionar NNA *
+                                </label>
+                                <div class="flex gap-2">
+                                    <button type="button" id="btnVerListaNinos" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1" title="Ver lista completa">
+                                        <i class="bi bi-list-ul"></i> Ver Lista
+                                    </button>
+                                    <button type="button" id="btnCrearNinoRapido" class="text-green-600 hover:text-green-800 text-sm font-medium flex items-center gap-1" title="Crear nuevo niño">
+                                        <i class="bi bi-plus-circle-fill"></i> Crear Niño
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <input type="text" id="buscadorNino" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Escribir DNI o nombre para buscar..." autocomplete="off">
+                                <i class="bi bi-search absolute right-3 top-4 text-gray-400"></i>
+                                <div id="resultadosNino" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-48 overflow-y-auto shadow-lg hidden">
+                                    <!-- Resultados del buscador -->
+                                </div>
+                            </div>
+                            <div id="ninoSeleccionado" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg hidden">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-sm font-semibold text-blue-900" id="ninoNombre"></span>
+                                        <span class="text-xs text-blue-600 ml-2">DNI: <span id="ninoDni"></span></span>
+                                    </div>
+                                    <button type="button" id="limpiarNino" class="text-blue-600 hover:text-blue-800">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Lista completa de niños (colapsable) -->
+                            <div id="listaNinosContainer" class="mt-3 border border-gray-300 rounded-lg overflow-hidden hidden">
+                                <div class="bg-gray-50 px-4 py-2 border-b border-gray-300 flex items-center justify-between">
+                                    <span class="text-sm font-semibold text-gray-700">
+                                        <i class="bi bi-people-fill mr-1"></i>Niños Registrados (<span id="totalNinosLista">0</span>)
+                                    </span>
+                                    <button type="button" id="btnCerrarListaNinos" class="text-gray-500 hover:text-gray-700">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                                <div class="max-h-64 overflow-y-auto">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-100 sticky top-0">
+                                            <tr>
+                                                <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700">Apellido</th>
+                                                <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700">Nombre</th>
+                                                <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700">DNI</th>
+                                                <th class="px-3 py-2 text-center text-xs font-semibold text-gray-700">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaListaNinos" class="divide-y divide-gray-200">
+                                            <!-- Rows dinámicas -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" name="ninoId" id="ninoId">
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="bi bi-calendar-event text-orange-600 mr-1"></i>Fecha de Ingreso *
+                                </label>
+                                <input type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" name="fechaIngreso" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="bi bi-flag-fill text-indigo-600 mr-1"></i>Estado *
+                                </label>
+                                <select class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" name="estadoId" required>
+                                    <option value="">Cargando estados...</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Selector de Tutor -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-sm font-semibold text-gray-700">
+                                    <i class="bi bi-person-badge text-purple-600 mr-1"></i>Seleccionar Tutor (Opcional)
+                                </label>
+                                <div class="flex gap-2">
+                                    <button type="button" id="btnVerListaTutores" class="text-purple-600 hover:text-purple-800 text-sm font-medium flex items-center gap-1" title="Ver lista completa">
+                                        <i class="bi bi-list-ul"></i> Ver Lista
+                                    </button>
+                                    <button type="button" id="btnCrearTutorRapido" class="text-green-600 hover:text-green-800 text-sm font-medium flex items-center gap-1" title="Crear nuevo tutor">
+                                        <i class="bi bi-plus-circle-fill"></i> Crear Tutor
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <input type="text" id="buscadorTutor" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 pr-10 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all" placeholder="Escribir nombre o teléfono para buscar..." autocomplete="off">
+                                <i class="bi bi-search absolute right-3 top-4 text-gray-400"></i>
+                                <div id="resultadosTutor" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-48 overflow-y-auto shadow-lg hidden">
+                                    <!-- Resultados del buscador -->
+                                </div>
+                            </div>
+                            <div id="tutorSeleccionado" class="mt-2 p-3 bg-purple-50 border border-purple-200 rounded-lg hidden">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-sm font-semibold text-purple-900" id="tutorNombre"></span>
+                                        <span class="text-xs text-purple-600 ml-2">Tel: <span id="tutorTelefono"></span></span>
+                                    </div>
+                                    <button type="button" id="limpiarTutor" class="text-purple-600 hover:text-purple-800">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Lista completa de tutores (colapsable) -->
+                            <div id="listaTutoresContainer" class="mt-3 border border-gray-300 rounded-lg overflow-hidden hidden">
+                                <div class="bg-gray-50 px-4 py-2 border-b border-gray-300 flex items-center justify-between">
+                                    <span class="text-sm font-semibold text-gray-700">
+                                        <i class="bi bi-person-badge-fill mr-1"></i>Tutores Registrados (<span id="totalTutoresLista">0</span>)
+                                    </span>
+                                    <button type="button" id="btnCerrarListaTutores" class="text-gray-500 hover:text-gray-700">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                                <div class="max-h-64 overflow-y-auto">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-100 sticky top-0">
+                                            <tr>
+                                                <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700">Apellido</th>
+                                                <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700">Nombre</th>
+                                                <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700">Teléfono</th>
+                                                <th class="px-3 py-2 text-center text-xs font-semibold text-gray-700">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaListaTutores" class="divide-y divide-gray-200">
+                                            <!-- Rows dinámicas -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" name="tutorId" id="tutorId">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-chat-left-text text-gray-600 mr-1"></i>Observaciones
+                            </label>
+                            <textarea class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" 
+                                      name="observaciones" 
+                                      rows="3"
+                                      placeholder="Notas adicionales sobre el legajo..."></textarea>
+                        </div>
+                        
+                        <!-- Info Box -->
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                            <div class="flex items-start">
+                                <i class="bi bi-info-circle-fill text-green-500 mt-0.5 mr-2"></i>
+                                <div class="text-sm text-green-700">
+                                    <strong>Importante:</strong> Debe seleccionar un niño antes de guardar el legajo.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end gap-3 pt-4 border-t bg-gray-50 rounded-b-xl">
+                            <button type="button" id="btnCancelarModal" 
+                                    class="px-6 py-3 border-2 border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors flex items-center gap-2">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-medium hover:from-green-700 hover:to-green-800 shadow-lg transition-all flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill"></i> Guardar Legajo
+                            </button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+
+                <div class="bg-white shadow-lg rounded-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900">
+                                    <i class="bi bi-table mr-2 text-gray-600"></i>Legajos Registrados
+                                </h2>
+                                <span class="text-sm text-gray-600">
+                                    Total: <span id="totalRegistrosTabla" class="font-semibold text-blue-600">0</span>
+                                </span>
+                            </div>
+                            <div class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                                <span class="px-3 text-gray-500"><i class="bi bi-search"></i></span>
+                                <input type="text" class="px-3 py-2 outline-none" id="busquedaLegajos" placeholder="Buscar por DNI o nombre...">
+                            </div>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DNI</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ingreso</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutor</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        <i class="bi bi-hash mr-1"></i>DNI
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        <i class="bi bi-person mr-1"></i>Nombre
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        <i class="bi bi-flag mr-1"></i>Estado
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        <i class="bi bi-calendar-event mr-1"></i>Ingreso
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        <i class="bi bi-person-badge mr-1"></i>Tutor
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        <i class="bi bi-gear mr-1"></i>Acciones
+                                    </th>
                                 </tr>
                             </thead>
-                            <tbody id="tablaLegajos" class="bg-white divide-y divide-gray-200"></tbody>
+                            <tbody id="tablaLegajos" class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                                            <p class="text-sm">Cargando legajos...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -158,23 +469,292 @@
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toastNotificacion" class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg border hidden z-50">
-        <div class="flex items-center p-4">
-            <i class="bi bi-info-circle-fill text-blue-500 mr-2"></i>
-            <div class="flex-1">
-                <div class="font-semibold">Sistema</div>
-                <div id="toastMensaje" class="text-sm text-gray-600"></div>
+    <!-- Mini Modal para crear tutor rápido -->
+    <div id="modalCrearTutor" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[70] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+            <div class="sticky top-0 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-4 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white bg-opacity-20 rounded-lg p-2">
+                            <i class="bi bi-person-badge-fill text-2xl"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xl font-bold">Crear Tutor Rápido</h5>
+                            <p class="text-purple-100 text-sm">Registre el tutor y continúe con el legajo</p>
+                        </div>
+                    </div>
+                    <button type="button" id="btnCerrarModalTutor" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors">
+                        <i class="bi bi-x-lg text-2xl"></i>
+                    </button>
+                </div>
             </div>
-            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600" onclick="hideToast()">
-                <i class="bi bi-x-lg"></i>
-            </button>
+            
+            <form id="tutorRapidoForm" class="p-6 space-y-4" novalidate>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="bi bi-person-fill text-green-600 mr-1"></i>Nombre *
+                        </label>
+                        <input type="text" name="nombre" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all" 
+                               placeholder="Ej: Juan" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="bi bi-person-badge text-purple-600 mr-1"></i>Apellido
+                        </label>
+                        <input type="text" name="apellido" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all" 
+                               placeholder="Ej: Pérez">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="bi bi-telephone-fill text-green-600 mr-1"></i>Teléfono
+                        </label>
+                        <input type="tel" name="telefono" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all" 
+                               placeholder="Ej: 3515555555">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="bi bi-envelope-fill text-blue-600 mr-1"></i>Email
+                        </label>
+                        <input type="email" name="email" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all" 
+                               placeholder="email@ejemplo.com">
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="bi bi-info-circle-fill text-purple-500 mt-0.5 mr-2"></i>
+                        <div class="text-sm text-purple-700">
+                            <strong>Nota:</strong> El tutor se creará y se seleccionará automáticamente en el formulario de legajo.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4 border-t">
+                    <button type="button" id="btnCancelarTutor" 
+                            class="px-6 py-3 border-2 border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors flex items-center gap-2">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 shadow-lg transition-all flex items-center gap-2">
+                        <i class="bi bi-check-circle-fill"></i> Crear y Seleccionar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
+    <!-- Mini Modal para crear niño rápido -->
+    <div id="modalCrearNino" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[70] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+            <div class="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white bg-opacity-20 rounded-lg p-2">
+                            <i class="bi bi-person-plus-fill text-2xl"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xl font-bold">Crear Niño Rápido</h5>
+                            <p class="text-blue-100 text-sm">Registre el niño y continúe con el legajo</p>
+                        </div>
+                    </div>
+                    <button type="button" id="btnCerrarModalNino" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors">
+                        <i class="bi bi-x-lg text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="ninoRapidoForm" class="p-6 space-y-4" novalidate>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="bi bi-card-text text-blue-600 mr-1"></i>DNI *
+                        </label>
+                        <input type="text" name="dni" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                               placeholder="Ej: 12345678" required pattern="\d{7,8}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="bi bi-calendar-event text-orange-600 mr-1"></i>Fecha de Nacimiento *
+                        </label>
+                        <input type="date" name="fechaNacimiento" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" required>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="bi bi-person-fill text-green-600 mr-1"></i>Nombre *
+                        </label>
+                        <input type="text" name="nombre" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                               placeholder="Ej: Juan" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="bi bi-person-badge text-purple-600 mr-1"></i>Apellido *
+                        </label>
+                        <input type="text" name="apellido" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                               placeholder="Ej: Pérez" required>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="bi bi-info-circle-fill text-blue-500 mt-0.5 mr-2"></i>
+                        <div class="text-sm text-blue-700">
+                            <strong>Nota:</strong> El niño se creará y se seleccionará automáticamente en el formulario de legajo.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4 border-t">
+                    <button type="button" id="btnCancelarNino" 
+                            class="px-6 py-3 border-2 border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors flex items-center gap-2">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 shadow-lg transition-all flex items-center gap-2">
+                        <i class="bi bi-check-circle-fill"></i> Crear y Seleccionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div id="modalConfirmacion" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[60] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="bi bi-exclamation-triangle-fill text-red-600 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="text-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Confirmar Eliminación</h3>
+                    <p class="text-sm text-gray-600" id="confirmacionMensaje">
+                        ¿Está seguro que desea eliminar este legajo? Esta acción no se puede deshacer.
+                    </p>
+                </div>
+                <div class="flex justify-center gap-3">
+                    <button id="btnCancelarEliminar" 
+                            class="px-6 py-3 border-2 border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors flex items-center gap-2">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button id="btnConfirmarEliminar" 
+                            class="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-medium hover:from-red-700 hover:to-red-800 shadow-lg transition-all flex items-center gap-2">
+                        <i class="bi bi-trash-fill"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastNotificacion" class="fixed bottom-4 right-4 bg-white shadow-2xl rounded-xl border-l-4 border-blue-500 hidden z-50 min-w-[320px] max-w-md animate-slide-in">
+        <div class="flex items-start p-4">
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i id="toastIcon" class="bi bi-info-circle-fill text-blue-600 text-xl"></i>
+                </div>
+            </div>
+            <div class="flex-1 ml-3">
+                <div class="font-bold text-gray-900" id="toastTitulo">Notificación</div>
+                <div id="toastMensaje" class="text-sm text-gray-600 mt-1"></div>
+            </div>
+            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors" onclick="hideToast()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="h-1 bg-gray-200 rounded-b-xl overflow-hidden">
+            <div id="toastProgress" class="h-full bg-blue-500 transition-all duration-5000 ease-linear" style="width: 100%"></div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slide-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in { animation: slide-in 0.3s ease-out; }
+        .overflow-x-auto { scrollbar-width: thin; scrollbar-color: #CBD5E0 #EDF2F7; }
+        .overflow-x-auto::-webkit-scrollbar { height: 8px; }
+        .overflow-x-auto::-webkit-scrollbar-track { background: #EDF2F7; border-radius: 4px; }
+        .overflow-x-auto::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
+        .overflow-x-auto::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
+    </style>
+
     <script>
-        function hideToast() { document.getElementById('toastNotificacion').classList.add('hidden'); }
-        function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('collapsed'); }
+        let toastTimeout = null;
+        let toastProgressInterval = null;
+
+        function hideToast() {
+            const toast = document.getElementById('toastNotificacion');
+            if (toast) {
+                toast.classList.add('hidden');
+                if (toastTimeout) clearTimeout(toastTimeout);
+                if (toastProgressInterval) clearInterval(toastProgressInterval);
+            }
+        }
+
+        function showToast(message, type = 'info', duration = 5000) {
+            const toast = document.getElementById('toastNotificacion');
+            const messageEl = document.getElementById('toastMensaje');
+            const titleEl = document.getElementById('toastTitulo');
+            const iconEl = document.getElementById('toastIcon');
+            const progress = document.getElementById('toastProgress');
+            
+            if (!toast || !messageEl) return;
+            if (toastTimeout) clearTimeout(toastTimeout);
+            if (toastProgressInterval) clearInterval(toastProgressInterval);
+            
+            let icon = 'bi-info-circle-fill', title = 'Información';
+            let colorClass = 'border-blue-500', bgClass = 'bg-blue-100';
+            let textClass = 'text-blue-600', progressClass = 'bg-blue-500';
+            
+            if (type === 'success' || message.includes('✅')) {
+                icon = 'bi-check-circle-fill'; title = 'Éxito';
+                colorClass = 'border-green-500'; bgClass = 'bg-green-100';
+                textClass = 'text-green-600'; progressClass = 'bg-green-500';
+            } else if (type === 'error' || message.includes('❌')) {
+                icon = 'bi-x-circle-fill'; title = 'Error';
+                colorClass = 'border-red-500'; bgClass = 'bg-red-100';
+                textClass = 'text-red-600'; progressClass = 'bg-red-500';
+            } else if (type === 'warning' || message.includes('⚠️')) {
+                icon = 'bi-exclamation-triangle-fill'; title = 'Advertencia';
+                colorClass = 'border-yellow-500'; bgClass = 'bg-yellow-100';
+                textClass = 'text-yellow-600'; progressClass = 'bg-yellow-500';
+            }
+            
+            const cleanMessage = message.replace(/[✅❌⚠️]/g, '').trim();
+            messageEl.textContent = cleanMessage;
+            titleEl.textContent = title;
+            iconEl.className = `bi ${icon} ${textClass} text-xl`;
+            iconEl.parentElement.className = `w-10 h-10 ${bgClass} rounded-full flex items-center justify-center`;
+            toast.className = `fixed bottom-4 right-4 bg-white shadow-2xl rounded-xl border-l-4 ${colorClass} z-50 min-w-[320px] max-w-md animate-slide-in`;
+            progress.className = `h-full ${progressClass} transition-all ease-linear`;
+            progress.style.width = '100%';
+            
+            toast.classList.remove('hidden');
+            
+            let width = 100;
+            const step = 100 / (duration / 50);
+            toastProgressInterval = setInterval(() => {
+                width -= step;
+                if (width <= 0) clearInterval(toastProgressInterval);
+                progress.style.width = width + '%';
+            }, 50);
+            
+            toastTimeout = setTimeout(() => hideToast(), duration);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('appSidebar').classList.toggle('collapsed');
+        }
+
         function toggleSubmenu(id, btn) {
             const el = document.getElementById(id);
             if (!el) return;

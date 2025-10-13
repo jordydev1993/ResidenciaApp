@@ -15,10 +15,10 @@ namespace WebApi.Models
 
         #region Propiedades
         public int Id { get; set; }
-        public string DNI { get; set; }
+        public int NinoId { get; set; }
         public DateTime FechaIngreso { get; set; }
         public int EstadoId { get; set; }
-        public string TutorAsignado { get; set; }
+        public int? TutorId { get; set; }
         public string Observaciones { get; set; }
         #endregion
 
@@ -71,11 +71,10 @@ namespace WebApi.Models
             {
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.Add("@DNI", SqlDbType.VarChar, 20).Value = DNI;
+                cmd.Parameters.Add("@NinoId", SqlDbType.Int).Value = NinoId;
                 cmd.Parameters.Add("@FechaIngreso", SqlDbType.Date).Value = FechaIngreso;
                 cmd.Parameters.Add("@EstadoId", SqlDbType.Int).Value = EstadoId;
-                cmd.Parameters.Add("@TutorAsignado", SqlDbType.NVarChar, 100).Value =
-                    string.IsNullOrWhiteSpace(TutorAsignado) ? (object)DBNull.Value : TutorAsignado;
+                cmd.Parameters.Add("@TutorId", SqlDbType.Int).Value = (object)TutorId ?? DBNull.Value;
                 cmd.Parameters.Add("@Observaciones", SqlDbType.NVarChar, 500).Value =
                     string.IsNullOrWhiteSpace(Observaciones) ? (object)DBNull.Value : Observaciones;
 
@@ -96,8 +95,7 @@ namespace WebApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@Id", SqlDbType.Int).Value = Id;
                 cmd.Parameters.Add("@EstadoId", SqlDbType.Int).Value = EstadoId;
-                cmd.Parameters.Add("@TutorAsignado", SqlDbType.NVarChar, 100).Value =
-                    string.IsNullOrWhiteSpace(TutorAsignado) ? (object)DBNull.Value : TutorAsignado;
+                cmd.Parameters.Add("@TutorId", SqlDbType.Int).Value = (object)TutorId ?? DBNull.Value;
                 cmd.Parameters.Add("@Observaciones", SqlDbType.NVarChar, 500).Value =
                     string.IsNullOrWhiteSpace(Observaciones) ? (object)DBNull.Value : Observaciones;
 
@@ -115,9 +113,21 @@ namespace WebApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@Id", SqlDbType.Int).Value = Id;
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
+                try
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+                catch (SqlException ex)
+                {
+                    // Si el SP lanza RAISERROR, capturarlo y relanzar con mensaje amigable
+                    if (ex.Message.Contains("alertas asociadas"))
+                    {
+                        throw new Exception("No se puede eliminar el legajo porque tiene alertas asociadas. Elimine primero las alertas.");
+                    }
+                    throw;
+                }
             }
         }
 

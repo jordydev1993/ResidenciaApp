@@ -1,0 +1,231 @@
+/**
+ * Sistema de Tooltips Modernos
+ * Tooltips elegantes con animaciones suaves
+ */
+
+/* Contenedor del tooltip */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+/* El tooltip en sí */
+[data-tooltip]::before,
+[data-tooltip]::after {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(5px);
+    z-index: 9999;
+}
+
+/* Contenido del tooltip */
+[data-tooltip]::before {
+    content: attr(data-tooltip);
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: nowrap;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 
+                0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+}
+
+/* Flecha del tooltip */
+[data-tooltip]::after {
+    content: '';
+    border: 6px solid transparent;
+    border-top-color: #1e293b;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+}
+
+/* Mostrar tooltip al hover */
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Tooltip posición inferior */
+[data-tooltip][data-tooltip-position="bottom"]::before {
+    bottom: auto;
+    top: calc(100% + 10px);
+    transform: translateX(-50%) translateY(-5px);
+}
+
+[data-tooltip][data-tooltip-position="bottom"]::after {
+    bottom: auto;
+    top: calc(100% + 4px);
+    border-top-color: transparent;
+    border-bottom-color: #1e293b;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+[data-tooltip][data-tooltip-position="bottom"]:hover::before,
+[data-tooltip][data-tooltip-position="bottom"]:hover::after {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Tooltip posición izquierda */
+[data-tooltip][data-tooltip-position="left"]::before {
+    left: auto;
+    right: calc(100% + 10px);
+    bottom: 50%;
+    transform: translateY(50%) translateX(5px);
+}
+
+[data-tooltip][data-tooltip-position="left"]::after {
+    left: auto;
+    right: calc(100% + 4px);
+    bottom: 50%;
+    border-top-color: transparent;
+    border-left-color: #1e293b;
+    transform: translateY(50%) translateX(5px);
+}
+
+[data-tooltip][data-tooltip-position="left"]:hover::before,
+[data-tooltip][data-tooltip-position="left"]:hover::after {
+    transform: translateY(50%) translateX(0);
+}
+
+/* Tooltip posición derecha */
+[data-tooltip][data-tooltip-position="right"]::before {
+    left: calc(100% + 10px);
+    bottom: 50%;
+    transform: translateY(50%) translateX(-5px);
+}
+
+[data-tooltip][data-tooltip-position="right"]::after {
+    left: calc(100% + 4px);
+    bottom: 50%;
+    border-top-color: transparent;
+    border-right-color: #1e293b;
+    transform: translateY(50%) translateX(-5px);
+}
+
+[data-tooltip][data-tooltip-position="right"]:hover::before,
+[data-tooltip][data-tooltip-position="right"]:hover::after {
+    transform: translateY(50%) translateX(0);
+}
+
+/* Tooltips de colores */
+[data-tooltip][data-tooltip-type="success"]::before {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+[data-tooltip][data-tooltip-type="success"]::after {
+    border-top-color: #059669;
+}
+
+[data-tooltip][data-tooltip-type="warning"]::before {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+}
+
+[data-tooltip][data-tooltip-type="warning"]::after {
+    border-top-color: #d97706;
+}
+
+[data-tooltip][data-tooltip-type="error"]::before {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+}
+
+[data-tooltip][data-tooltip-type="error"]::after {
+    border-top-color: #dc2626;
+}
+
+[data-tooltip][data-tooltip-type="info"]::before {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+}
+
+[data-tooltip][data-tooltip-type="info"]::after {
+    border-top-color: #2563eb;
+}
+
+/* Tooltip para textos largos */
+[data-tooltip][data-tooltip-multiline]::before {
+    white-space: normal;
+    max-width: 250px;
+    text-align: left;
+}
+
+/* Animación de entrada más suave */
+@keyframes tooltip-slide-up {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+[data-tooltip]:hover::before {
+    animation: tooltip-slide-up 0.3s ease-out;
+}
+
+/* Efecto de brillo sutil */
+[data-tooltip]::before {
+    background-size: 200% 200%;
+    animation: subtle-shine 3s ease infinite;
+}
+
+@keyframes subtle-shine {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Responsive: ocultar tooltips en móviles */
+@media (max-width: 768px) {
+    [data-tooltip]::before,
+    [data-tooltip]::after {
+        display: none;
+    }
+}
+
+/* Clase auxiliar para iconos con tooltip */
+.tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.tooltip-icon:hover {
+    background: #3b82f6;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Tooltip para badges */
+.badge-tooltip {
+    cursor: help;
+    position: relative;
+}
+
+.badge-tooltip:hover {
+    filter: brightness(1.1);
+}
+

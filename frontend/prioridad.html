@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABM Prioridad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/tooltips.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    #appSidebar.collapsed { width: 64px; }
+    #appSidebar.collapsed .menu-text { display: none; }
+    #appSidebar.collapsed .submenu { display: none !important; }
+    #appSidebar .chevron { transition: transform 0.2s ease; }
+    #appSidebar .chevron.rotated { transform: rotate(90deg); }
+    </style>
+    <script type="module" src="assets/js/prioridad/page.js" defer></script>
+</head>
+<body>
+    <main>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex">
+                <!-- Sidebar estilo TailAdmin -->
+            <aside id="appSidebar" class="w-64 bg-white border-r rounded-lg mr-8 p-3 h-[100vh] sticky top-0 overflow-y-auto transition-all">
+                <div class="mb-6 pb-4 border-b border-gray-200">
+                    <a href="./index.html" class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-house-heart text-white text-xl"></i>
+                        </div>
+                        <div class="menu-text">
+                            <div class="text-lg font-bold text-gray-900">Sistema</div>
+                            <div class="text-xs text-gray-500">Residencias</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="flex items-center justify-between mb-3 px-2">
+                    <span class="text-xs font-semibold text-gray-400 tracking-wider menu-text">MENÚ</span>
+                    <button class="text-gray-500 hover:text-gray-700" title="Colapsar" onclick="toggleSidebar()">
+                        <i class="bi bi-layout-sidebar-inset"></i>
+                    </button>
+                </div>
+                <nav class="space-y-1">
+                    <a href="./dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-speedometer2 text-xl"></i>
+                        <span class="menu-text">Dashboard</span>
+                    </a>
+                    <a href="./legajos.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-person-lines-fill text-xl"></i>
+                        <span class="menu-text">Legajos</span>
+                    </a>
+                    <a href="./alertas.html" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-bell-fill text-xl"></i>
+                        <span class="menu-text">Alertas</span>
+                    </a>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuReportes', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-bar-chart-line text-xl"></i>
+                            <span class="menu-text">Reportes</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </button>
+                    <div id="submenuReportes" class="submenu pl-11 space-y-1 hidden">
+                        <a href="./reportes_legajos.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Legajos</a>
+                        <a href="./reportes_alertas.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Reportes de Alertas</a>
+                    </div>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuAcceso', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-person-circle text-xl"></i>
+                            <span class="menu-text">Acceso</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </button>
+                    <div id="submenuAcceso" class="submenu pl-11 space-y-1 hidden">
+                        <a href="./auth.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Login/Registro</a>
+                    </div>
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700" onclick="toggleSubmenu('submenuCatalogos', this)">
+                        <span class="flex items-center gap-3">
+                            <i class="bi bi-collection text-xl"></i>
+                            <span class="menu-text">Configuraciones</span>
+                        </span>
+                        <i class="bi bi-chevron-right chevron rotated"></i>
+                    </button>
+                    <div id="submenuCatalogos" class="submenu pl-11 space-y-1">
+                        <a href="./ninos.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Niños</a>
+                        <a href="./estados.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Estados</a>
+                        <a href="./tutores.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Tutores</a>
+                        <a href="./tipo-alerta.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Tipo Alerta</a>
+                        <a href="./prioridad.html" class="block px-3 py-2 rounded-md bg-blue-50 text-blue-700">Prioridad</a>
+                        <a href="./estado-alerta.html" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">Estado Alerta</a>
+                    </div>
+                </nav>
+                <div class="mt-6 px-2">
+                    <span class="text-xs font-semibold text-gray-400 tracking-wider menu-text">OTROS</span>
+                </div>
+                <nav class="mt-2 space-y-1">
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
+                        <i class="bi bi-gear"></i>
+                        <span class="menu-text">Ajustes</span>
+                    </a>
+                </nav>
+            </aside>
+                <div class="flex-1">
+                    
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">
+                    <i class="bi bi-exclamation-triangle-fill mr-2 text-red-600"></i>Prioridades
+                </h1>
+                <p class="text-sm text-gray-600 mt-1">Niveles de prioridad para alertas</p>
+            </div>
+        </div>
+
+        <!-- Formulario de Registro -->
+         <!-- <div class="bg-white shadow-lg rounded-xl p-6 mb-6">
+        <div class="bg-white shadow-lg rounded-xl p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="bi bi-plus-circle mr-2 text-blue-600"></i>Nueva Prioridad
+            </h2>
+            <form id="prioridadForm" class="grid grid-cols-1 md:grid-cols-12 gap-4" novalidate>
+                <input type="hidden" name="id">
+                <div class="md:col-span-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-tag-fill text-purple-600 mr-1"></i>Nombre *
+                        <span class="tooltip-icon ml-1" data-tooltip="Nombre de la prioridad" data-tooltip-type="info">?</span>
+                    </label>
+                    <input class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                           name="nombre" 
+                           required
+                           placeholder="Ej: Alta, Media, Baja">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-palette text-orange-600 mr-1"></i>Color
+                        <span class="tooltip-icon ml-1" data-tooltip="Color representativo" data-tooltip-type="info">?</span>
+                    </label>
+                    <input type="color" class="w-full border-2 border-gray-300 rounded-lg px-2 py-2 h-[50px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                           name="color" 
+                           value="#3B82F6">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-sort-numeric-down text-purple-600 mr-1"></i>Orden
+                        <span class="tooltip-icon ml-1" data-tooltip="Orden de visualización" data-tooltip-type="info">?</span>
+                    </label>
+                    <input type="number" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                           name="orden"
+                           min="1"
+                           placeholder="1, 2, 3...">
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-file-text text-green-600 mr-1"></i>Descripción
+                    </label>
+                    <input class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                           name="descripcion"
+                           placeholder="Descripción opcional">
+                </div>
+                <div class="md:col-span-2 flex items-end gap-2">
+                    <button type="submit" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 shadow-lg transition-all flex-1" data-tooltip="Guardar prioridad">
+                        <i class="bi bi-save-fill mr-1"></i>Guardar
+                    </button>
+                    <button type="button" id="limpiarFormulario" class="bg-gray-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-gray-600 transition-all" data-tooltip="Limpiar formulario">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabla Mejorada -->
+        <div class="bg-white shadow-lg rounded-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    <i class="bi bi-table mr-2 text-gray-600"></i>Prioridades Registradas
+                </h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                <i class="bi bi-hash mr-1"></i>ID
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                <i class="bi bi-tag mr-1"></i>Nombre
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                <i class="bi bi-palette mr-1"></i>Color
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                <i class="bi bi-sort-numeric-down mr-1"></i>Orden
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                <i class="bi bi-file-text mr-1"></i>Descripción
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                <i class="bi bi-gear mr-1"></i>Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPrioridad" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                                    <p class="text-sm">Cargando prioridades...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toastNotificacion" class="fixed bottom-4 right-4 bg-white shadow-2xl rounded-xl border-l-4 border-blue-500 hidden z-50 min-w-[320px] max-w-md animate-slide-in">
+        <div class="flex items-start p-4">
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i id="toastIcon" class="bi bi-info-circle-fill text-blue-600 text-xl"></i>
+                </div>
+            </div>
+            <div class="flex-1 ml-3">
+                <div class="font-bold text-gray-900" id="toastTitulo">Notificación</div>
+                <div id="toastMensaje" class="text-sm text-gray-600 mt-1"></div>
+            </div>
+            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors" onclick="hideToast()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="h-1 bg-gray-200 rounded-b-xl overflow-hidden">
+            <div id="toastProgress" class="h-full bg-blue-500 transition-all duration-5000 ease-linear" style="width: 100%"></div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slide-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in { animation: slide-in 0.3s ease-out; }
+        .overflow-x-auto { scrollbar-width: thin; scrollbar-color: #CBD5E0 #EDF2F7; }
+        .overflow-x-auto::-webkit-scrollbar { height: 8px; }
+        .overflow-x-auto::-webkit-scrollbar-track { background: #EDF2F7; border-radius: 4px; }
+        .overflow-x-auto::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
+        .overflow-x-auto::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
+    </style>
+
+    <script>
+        let toastTimeout = null;
+        let toastProgressInterval = null;
+
+        function hideToast() {
+            const toast = document.getElementById('toastNotificacion');
+            if (toast) {
+                toast.classList.add('hidden');
+                if (toastTimeout) clearTimeout(toastTimeout);
+                if (toastProgressInterval) clearInterval(toastProgressInterval);
+            }
+        }
+
+        function showToast(message, type = 'info', duration = 5000) {
+            const toast = document.getElementById('toastNotificacion');
+            const messageEl = document.getElementById('toastMensaje');
+            const titleEl = document.getElementById('toastTitulo');
+            const iconEl = document.getElementById('toastIcon');
+            const progress = document.getElementById('toastProgress');
+            
+            if (!toast || !messageEl) return;
+            if (toastTimeout) clearTimeout(toastTimeout);
+            if (toastProgressInterval) clearInterval(toastProgressInterval);
+            
+            let icon = 'bi-info-circle-fill', title = 'Información';
+            let colorClass = 'border-blue-500', bgClass = 'bg-blue-100';
+            let textClass = 'text-blue-600', progressClass = 'bg-blue-500';
+            
+            if (type === 'success' || message.includes('✅')) {
+                icon = 'bi-check-circle-fill'; title = 'Éxito';
+                colorClass = 'border-green-500'; bgClass = 'bg-green-100';
+                textClass = 'text-green-600'; progressClass = 'bg-green-500';
+            } else if (type === 'error' || message.includes('❌')) {
+                icon = 'bi-x-circle-fill'; title = 'Error';
+                colorClass = 'border-red-500'; bgClass = 'bg-red-100';
+                textClass = 'text-red-600'; progressClass = 'bg-red-500';
+            } else if (type === 'warning' || message.includes('⚠️')) {
+                icon = 'bi-exclamation-triangle-fill'; title = 'Advertencia';
+                colorClass = 'border-yellow-500'; bgClass = 'bg-yellow-100';
+                textClass = 'text-yellow-600'; progressClass = 'bg-yellow-500';
+            }
+            
+            const cleanMessage = message.replace(/[✅❌⚠️]/g, '').trim();
+            messageEl.textContent = cleanMessage;
+            titleEl.textContent = title;
+            iconEl.className = `bi ${icon} ${textClass} text-xl`;
+            iconEl.parentElement.className = `w-10 h-10 ${bgClass} rounded-full flex items-center justify-center`;
+            toast.className = `fixed bottom-4 right-4 bg-white shadow-2xl rounded-xl border-l-4 ${colorClass} z-50 min-w-[320px] max-w-md animate-slide-in`;
+            progress.className = `h-full ${progressClass} transition-all ease-linear`;
+            progress.style.width = '100%';
+            
+            toast.classList.remove('hidden');
+            
+            let width = 100;
+            const step = 100 / (duration / 50);
+            toastProgressInterval = setInterval(() => {
+                width -= step;
+                if (width <= 0) clearInterval(toastProgressInterval);
+                progress.style.width = width + '%';
+            }, 50);
+            
+            toastTimeout = setTimeout(() => hideToast(), duration);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('appSidebar').classList.toggle('collapsed');
+        }
+
+        function toggleSubmenu(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.toggle('hidden');
+            const icon = btn && btn.querySelector('.chevron');
+            if (icon) icon.classList.toggle('rotated');
+        }
+    </script>
+</body>
+</html>

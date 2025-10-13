@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\WebApi",
+    "\\WebApi\\Models"
   ],
+  "SelectedNode": "\\ResidenciaWebApp.sln",
   "PreviewInSolutionExplorer": false
 }

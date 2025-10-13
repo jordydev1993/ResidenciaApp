@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Sistema de Tooltips</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/tooltips.css">
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-6xl mx-auto px-4 py-12">
+        
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                <i class="bi bi-info-circle-fill text-blue-600 mr-2"></i>
+                Demostración del Sistema de Tooltips
+            </h1>
+            <p class="text-lg text-gray-600">
+                Pasa el cursor sobre los elementos para ver los tooltips en acción
+            </p>
+        </div>
+
+        <!-- Posiciones -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                📍 Posiciones de Tooltips
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium" 
+                            data-tooltip="Tooltip superior">
+                        Top (default)
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium" 
+                            data-tooltip="Tooltip inferior" 
+                            data-tooltip-position="bottom">
+                        Bottom
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium" 
+                            data-tooltip="Tooltip izquierda" 
+                            data-tooltip-position="left">
+                        Left
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="bg-orange-600 text-white px-6 py-3 rounded-lg font-medium" 
+                            data-tooltip="Tooltip derecha" 
+                            data-tooltip-position="right">
+                        Right
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tipos/Colores -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                🎨 Tipos de Tooltips (Colores)
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium" 
+                            data-tooltip="Información general" 
+                            data-tooltip-type="info">
+                        <i class="bi bi-info-circle-fill mr-2"></i>Info
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium" 
+                            data-tooltip="¡Operación exitosa!" 
+                            data-tooltip-type="success">
+                        <i class="bi bi-check-circle-fill mr-2"></i>Success
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium" 
+                            data-tooltip="¡Atención requerida!" 
+                            data-tooltip-type="warning">
+                        <i class="bi bi-exclamation-triangle-fill mr-2"></i>Warning
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button class="bg-red-600 text-white px-6 py-3 rounded-lg font-medium" 
+                            data-tooltip="¡Error detectado!" 
+                            data-tooltip-type="error">
+                        <i class="bi bi-x-circle-fill mr-2"></i>Error
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Iconos de Ayuda -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                ❓ Iconos de Ayuda Contextuales
+            </h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-person-fill text-blue-600 mr-1"></i>Nombre del Usuario
+                        <span class="tooltip-icon ml-1" data-tooltip="Ingrese el nombre completo" data-tooltip-type="info">?</span>
+                    </label>
+                    <input type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="Juan Pérez">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-exclamation-triangle-fill text-red-600 mr-1"></i>Nivel de Prioridad
+                        <span class="tooltip-icon ml-1" data-tooltip="Alta: urgente | Media: importante | Baja: normal" data-tooltip-type="warning">?</span>
+                    </label>
+                    <select class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500">
+                        <option>Seleccionar...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-calendar-event text-orange-600 mr-1"></i>Fecha de Vencimiento
+                        <span class="tooltip-icon ml-1" data-tooltip="La fecha en que debe completarse esta tarea" data-tooltip-type="warning">?</span>
+                    </label>
+                    <input type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones con Tooltips -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                🔘 Botones con Tooltips
+            </h2>
+            <div class="flex flex-wrap gap-4">
+                <button class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg" 
+                        data-tooltip="Guardar cambios realizados" 
+                        data-tooltip-type="info">
+                    <i class="bi bi-save-fill mr-2"></i>Guardar
+                </button>
+                <button class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg" 
+                        data-tooltip="Enviar formulario" 
+                        data-tooltip-type="success">
+                    <i class="bi bi-send-fill mr-2"></i>Enviar
+                </button>
+                <button class="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg" 
+                        data-tooltip="Eliminar este registro permanentemente" 
+                        data-tooltip-type="error">
+                    <i class="bi bi-trash-fill mr-2"></i>Eliminar
+                </button>
+                <button class="border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium" 
+                        data-tooltip="Cancelar operación">
+                    <i class="bi bi-x-circle mr-2"></i>Cancelar
+                </button>
+            </div>
+        </div>
+
+        <!-- Badges con Tooltips -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                🏷️ Badges con Tooltips
+            </h2>
+            <div class="flex flex-wrap gap-4">
+                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-red-100 text-red-800 border border-red-300 cursor-help" 
+                      data-tooltip="Requiere atención inmediata" 
+                      data-tooltip-type="error">
+                    <i class="bi bi-exclamation-triangle-fill mr-2"></i>Alta Prioridad
+                </span>
+                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-yellow-100 text-yellow-800 border border-yellow-300 cursor-help" 
+                      data-tooltip="Atender cuando sea posible" 
+                      data-tooltip-type="warning">
+                    <i class="bi bi-exclamation-circle mr-2"></i>Media Prioridad
+                </span>
+                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-100 text-green-800 border border-green-300 cursor-help" 
+                      data-tooltip="Sin urgencia" 
+                      data-tooltip-type="success">
+                    <i class="bi bi-check-circle mr-2"></i>Baja Prioridad
+                </span>
+            </div>
+        </div>
+
+        <!-- Iconos con Tooltips -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                ⭐ Iconos con Tooltips (Acciones)
+            </h2>
+            <div class="flex gap-4">
+                <button class="p-3 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                        data-tooltip="Ver detalles completos" 
+                        data-tooltip-type="info">
+                    <i class="bi bi-eye-fill text-2xl"></i>
+                </button>
+                <button class="p-3 text-green-600 hover:bg-green-50 rounded-lg transition-colors" 
+                        data-tooltip="Editar registro" 
+                        data-tooltip-type="success">
+                    <i class="bi bi-pencil-fill text-2xl"></i>
+                </button>
+                <button class="p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                        data-tooltip="Eliminar permanentemente" 
+                        data-tooltip-type="error">
+                    <i class="bi bi-trash-fill text-2xl"></i>
+                </button>
+                <button class="p-3 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors" 
+                        data-tooltip="Descargar archivo">
+                    <i class="bi bi-download text-2xl"></i>
+                </button>
+                <button class="p-3 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors" 
+                        data-tooltip="Imprimir documento">
+                    <i class="bi bi-printer-fill text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- KPIs con Tooltips -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                📊 KPIs con Tooltips
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl p-6 shadow-lg cursor-help" 
+                     data-tooltip="Alertas que superaron su fecha límite" 
+                     data-tooltip-type="error">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-red-100 text-sm font-medium mb-1">Vencidas</p>
+                            <h3 class="text-4xl font-bold">12</h3>
+                        </div>
+                        <div class="bg-red-400 bg-opacity-30 rounded-full p-4">
+                            <i class="bi bi-exclamation-triangle-fill text-4xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white rounded-xl p-6 shadow-lg cursor-help" 
+                     data-tooltip="Vencen en los próximos 3 días" 
+                     data-tooltip-type="warning">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-yellow-100 text-sm font-medium mb-1">Próximas</p>
+                            <h3 class="text-4xl font-bold">8</h3>
+                        </div>
+                        <div class="bg-yellow-400 bg-opacity-30 rounded-full p-4">
+                            <i class="bi bi-clock-fill text-4xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-6 shadow-lg cursor-help" 
+                     data-tooltip="Alertas pendientes de completar" 
+                     data-tooltip-type="info">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-100 text-sm font-medium mb-1">Pendientes</p>
+                            <h3 class="text-4xl font-bold">45</h3>
+                        </div>
+                        <div class="bg-blue-400 bg-opacity-30 rounded-full p-4">
+                            <i class="bi bi-hourglass-split text-4xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-6 shadow-lg cursor-help" 
+                     data-tooltip="Alertas resueltas con éxito" 
+                     data-tooltip-type="success">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm font-medium mb-1">Completadas</p>
+                            <h3 class="text-4xl font-bold">234</h3>
+                        </div>
+                        <div class="bg-green-400 bg-opacity-30 rounded-full p-4">
+                            <i class="bi bi-check-circle-fill text-4xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario con Tooltips -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                📝 Formulario con Tooltips
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-card-text text-blue-600 mr-1"></i>DNI
+                        <span class="tooltip-icon ml-1" data-tooltip="Documento Nacional de Identidad de 7-8 dígitos" data-tooltip-type="info">?</span>
+                    </label>
+                    <input type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="12345678">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-envelope text-green-600 mr-1"></i>Email
+                        <span class="tooltip-icon ml-1" data-tooltip="Correo electrónico válido" data-tooltip-type="info">?</span>
+                    </label>
+                    <input type="email" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="usuario@ejemplo.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-tag-fill text-purple-600 mr-1"></i>Categoría
+                        <span class="tooltip-icon ml-1" data-tooltip="Seleccione la categoría correspondiente" data-tooltip-type="info">?</span>
+                    </label>
+                    <select class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                        <option>Médica</option>
+                        <option>Judicial</option>
+                        <option>Educativa</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-calendar-event text-orange-600 mr-1"></i>Fecha
+                        <span class="tooltip-icon ml-1" data-tooltip="Fecha del evento o vencimiento" data-tooltip-type="warning">?</span>
+                    </label>
+                    <input type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla con Tooltips -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b">
+                <h2 class="text-xl font-bold text-gray-900">
+                    📋 Tabla con Tooltips en Acciones
+                </h2>
+            </div>
+            <div class="p-6">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left py-3 px-4 text-sm font-bold text-gray-700">Nombre</th>
+                            <th class="text-left py-3 px-4 text-sm font-bold text-gray-700">Estado</th>
+                            <th class="text-left py-3 px-4 text-sm font-bold text-gray-700">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-4 px-4">Juan Pérez</td>
+                            <td class="py-4 px-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Activo
+                                </span>
+                            </td>
+                            <td class="py-4 px-4">
+                                <div class="flex gap-2">
+                                    <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" 
+                                            data-tooltip="Ver detalle" 
+                                            data-tooltip-type="info">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </button>
+                                    <button class="p-2 text-green-600 hover:bg-green-50 rounded-lg" 
+                                            data-tooltip="Editar" 
+                                            data-tooltip-type="success">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg" 
+                                            data-tooltip="Eliminar" 
+                                            data-tooltip-type="error">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-4 px-4">María González</td>
+                            <td class="py-4 px-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Pendiente
+                                </span>
+                            </td>
+                            <td class="py-4 px-4">
+                                <div class="flex gap-2">
+                                    <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" 
+                                            data-tooltip="Ver detalle">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </button>
+                                    <button class="p-2 text-green-600 hover:bg-green-50 rounded-lg" 
+                                            data-tooltip="Editar">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg" 
+                                            data-tooltip="Eliminar">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Info -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+            <div class="flex items-start">
+                <i class="bi bi-info-circle-fill text-blue-500 text-2xl mt-0.5 mr-3"></i>
+                <div>
+                    <h3 class="font-bold text-blue-900 mb-2">Información</h3>
+                    <p class="text-sm text-blue-700 mb-4">
+                        Este sistema de tooltips está implementado en todas las páginas del sistema.
+                        Los tooltips se ocultan automáticamente en dispositivos móviles para una mejor experiencia táctil.
+                    </p>
+                    <div class="text-sm text-blue-700">
+                        <strong>Archivos del sistema:</strong>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li><code class="bg-blue-100 px-2 py-1 rounded">assets/css/tooltips.css</code> - Estilos completos</li>
+                            <li><code class="bg-blue-100 px-2 py-1 rounded">GUIA_COMPONENTES.md</code> - Guía de uso</li>
+                            <li><code class="bg-blue-100 px-2 py-1 rounded">alertas.html</code> - Ejemplo completo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-12 text-gray-600">
+            <p class="text-sm">
+                <i class="bi bi-box-seam mr-2"></i>
+                Sistema de Gestión de Residencias v2.0
+            </p>
+            <p class="text-xs mt-2">
+                Tooltips implementados en <strong>100+</strong> elementos del sistema
+            </p>
+        </div>
+
+    </div>
+</body>
+</html>
+
