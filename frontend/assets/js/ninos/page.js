@@ -4,6 +4,7 @@ import { upsertNino, listNinos, deleteNino, existsDni } from '../api/ninoApi.js'
 let ninosData = [];
 let filteredData = [];
 let ninoToDelete = null;
+let selectedNino = null; // Niño actualmente seleccionado
 let sortColumn = 'apellido'; // Columna de ordenamiento por defecto
 let sortDirection = 'asc'; // Dirección: 'asc' o 'desc'
 
@@ -36,25 +37,15 @@ function rowTemplate(n) {
         estadoBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${estado}</span>`;
     }
     
-    return `<tr class="hover:bg-gray-50">
+    return `<tr class="hover:bg-gray-50" data-dni="${dni}">
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${apellido}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${nombre}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${dni}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${String(fnac).substring(0,10)}</td>
         <td class="px-6 py-4 whitespace-nowrap">${estadoBadge}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            ${legajoId ? `<a href="./legajos.html?id=${legajoId}" class="text-blue-600 hover:underline">${legajoId}</a>` : 
+            ${legajoId ? `<a href="./legajos.html?id=${legajoId}" class="text-blue-600 hover:underline" onclick="event.stopPropagation()">${legajoId}</a>` : 
               `<span class="text-gray-400">Sin legajo</span>`}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <div class="flex space-x-2">
-                <button data-dni="${dni}" class="btn-edit text-blue-600 hover:text-blue-900" title="Editar">
-                    <i class="bi bi-pencil-square"></i>
-                </button>
-                <button data-dni="${dni}" class="btn-delete text-red-600 hover:text-red-900" title="Eliminar">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
         </td>
     </tr>`;
 }
@@ -65,8 +56,10 @@ async function load() {
         const items = Array.isArray(data) ? data : (data?.items || data);
         ninosData = items || [];
         filteredData = [...ninosData];
+        selectedNino = null; // Limpiar selección al recargar
         updateKPIs(); // Actualizar KPIs
         renderTable();
+        updateActionButtons(); // Actualizar estado de botones
         bindEvents();
         
         // Mostrar indicador de modo demo si hay datos de prueba
@@ -95,12 +88,61 @@ function renderTable() {
         tableBody.innerHTML = '';
         emptyState?.classList.remove('hidden');
         if (contador) contador.textContent = '0';
+        selectedNino = null;
+        updateActionButtons();
         return;
     }
     
     emptyState?.classList.add('hidden');
     renderHTML(tableBody, filteredData.map(rowTemplate).join(''));
     if (contador) contador.textContent = filteredData.length;
+    
+    // Restaurar selección si existe
+    if (selectedNino) {
+        const dni = selectedNino.DNI ?? selectedNino.Dni ?? selectedNino["DNI"] ?? selectedNino["Dni"] ?? selectedNino[1];
+        const row = tableBody.querySelector(`tr[data-dni="${dni}"]`);
+        if (row) {
+            row.classList.add('selected');
+        } else {
+            selectedNino = null;
+            updateActionButtons();
+        }
+    }
+}
+
+function selectRow(dni) {
+    // Buscar el niño en los datos
+    selectedNino = ninosData.find(n => (n.DNI ?? n.Dni ?? n["DNI"] ?? n["Dni"] ?? n[1]) === dni);
+    
+    // Actualizar clases visuales
+    const tableBody = $('#tablaNinos');
+    tableBody.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+    const selectedRow = tableBody.querySelector(`tr[data-dni="${dni}"]`);
+    if (selectedRow) {
+        selectedRow.classList.add('selected');
+    }
+    
+    updateActionButtons();
+}
+
+function unselectRow() {
+    selectedNino = null;
+    const tableBody = $('#tablaNinos');
+    tableBody?.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+    updateActionButtons();
+}
+
+function updateActionButtons() {
+    const btnEditar = $('#btnEditarNino');
+    const btnEliminar = $('#btnEliminarNino');
+    
+    if (selectedNino) {
+        btnEditar?.removeAttribute('disabled');
+        btnEliminar?.removeAttribute('disabled');
+    } else {
+        btnEditar?.setAttribute('disabled', 'disabled');
+        btnEliminar?.setAttribute('disabled', 'disabled');
+    }
 }
 
 function updateKPIs() {
@@ -222,17 +264,21 @@ function toggleSort(column) {
 }
 
 function bindEvents() {
-    // Eventos de la tabla
-    $('#tablaNinos')?.addEventListener('click', async (e) => {
-        const btnEdit = e.target.closest('.btn-edit');
-        const btnDelete = e.target.closest('.btn-delete');
+    // Eventos de la tabla - selección de filas
+    $('#tablaNinos')?.addEventListener('click', (e) => {
+        // Ignorar clicks en enlaces
+        if (e.target.tagName === 'A' || e.target.closest('a')) return;
         
-        if (btnEdit) {
-            const dni = btnEdit.getAttribute('data-dni');
-            editNino(dni);
-        } else if (btnDelete) {
-            const dni = btnDelete.getAttribute('data-dni');
-            deleteNinoConfirm(dni);
+        const row = e.target.closest('tr[data-dni]');
+        if (row) {
+            const dni = row.getAttribute('data-dni');
+            
+            // Si la fila ya está seleccionada, deseleccionar
+            if (row.classList.contains('selected')) {
+                unselectRow();
+            } else {
+                selectRow(dni);
+            }
         }
     });
     
@@ -251,7 +297,22 @@ function bindEvents() {
     $('#btnLimpiarFiltros')?.addEventListener('click', clearFilters);
     
     // Eventos del modal
-    $('#btnNuevoNino')?.addEventListener('click', showModal);
+    $('#btnNuevoNino')?.addEventListener('click', () => {
+        unselectRow(); // Limpiar selección al crear nuevo
+        showModal();
+    });
+    $('#btnEditarNino')?.addEventListener('click', () => {
+        if (selectedNino) {
+            const dni = selectedNino.DNI ?? selectedNino.Dni ?? selectedNino["DNI"] ?? selectedNino["Dni"] ?? selectedNino[1];
+            editNino(dni);
+        }
+    });
+    $('#btnEliminarNino')?.addEventListener('click', () => {
+        if (selectedNino) {
+            const dni = selectedNino.DNI ?? selectedNino.Dni ?? selectedNino["DNI"] ?? selectedNino["Dni"] ?? selectedNino[1];
+            deleteNinoConfirm(dni);
+        }
+    });
     $('#btnCerrarModal')?.addEventListener('click', hideModal);
     $('#btnCancelarModal')?.addEventListener('click', hideModal);
     
@@ -331,6 +392,18 @@ function deleteNinoConfirm(dni) {
 
 function showModal() {
     const modal = $('#modalNino');
+    const fechaNacInput = $('#fechaNacimiento');
+    
+    // Establecer fecha máxima (hace 18 años) y mínima (hace 100 años)
+    if (fechaNacInput) {
+        const hoy = new Date();
+        const hace18Anos = new Date(hoy.getFullYear() - 18, hoy.getMonth(), hoy.getDate());
+        const hace100Anos = new Date(hoy.getFullYear() - 100, hoy.getMonth(), hoy.getDate());
+        
+        fechaNacInput.setAttribute('max', hace18Anos.toISOString().split('T')[0]);
+        fechaNacInput.setAttribute('min', hace100Anos.toISOString().split('T')[0]);
+    }
+    
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden'; // Prevenir scroll del body
 }
@@ -439,6 +512,12 @@ function bindForm() {
         const hoy = new Date();
         if (fechaNac > hoy) {
             return showToast('La fecha de nacimiento no puede ser futura');
+        }
+        
+        // Validar que sea menor de 18 años
+        const edad = Math.floor((hoy - fechaNac) / (365.25 * 24 * 60 * 60 * 1000));
+        if (edad >= 18) {
+            return showToast('⚠️ No se puede registrar. El niño debe ser menor de 18 años');
         }
         
         try {

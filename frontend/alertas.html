@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="assets/css/tooltips.css">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script type="module">
+        // Proteger página con autenticación
+        import { initAuth, handleLogout } from './assets/js/utils/authGuard.js';
+        initAuth();
+        
+        // Exponer handleLogout globalmente para el botón
+        window.handleLogout = handleLogout;
+    </script>
     <script type="module" src="assets/js/alertas/page.js" defer></script>
     <style>
     #appSidebar.collapsed { width: 64px; }
@@ -102,16 +110,44 @@
                         <i class="bi bi-gear"></i>
                         <span class="menu-text">Ajustes</span>
                     </a>
+                    <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-red-50 text-red-600 transition-colors">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="menu-text">Cerrar Sesión</span>
+                    </button>
                 </nav>
+
+                <!-- Información del Usuario -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-lg">
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-person-fill text-white text-xl"></i>
+                        </div>
+                        <div class="menu-text overflow-hidden">
+                            <div class="text-sm font-semibold text-gray-900 truncate" data-user-name>Usuario</div>
+                            <div class="text-xs text-gray-600 truncate" data-user-role>Rol</div>
+                        </div>
+                    </div>
+                </div>
             </aside>
             <div class="flex-1">
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold text-gray-900">
-                <i class="bi bi-bell-fill mr-2 text-blue-600"></i>Gestión de Alertas
+                <i class="bi bi-bell-fill mr-2 text-blue-600"></i>Gestiónar Alertas
             </h1>
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 shadow-md transition-all" onclick="toggleModal('modalNuevaAlerta')" data-tooltip="Registrar nueva alerta en el sistema" data-tooltip-position="left">
-                <i class="bi bi-plus-circle mr-2"></i>Nueva Alerta
-            </button>
+            <div class="flex items-center gap-3">
+                <button id="btnVerDetalle" class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-6 py-3 rounded-lg font-medium hover:from-indigo-700 hover:to-indigo-800 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" data-tooltip="Ver detalle completo de la alerta seleccionada" data-tooltip-position="left" disabled>
+                    <i class="bi bi-eye-fill"></i> Ver Detalle
+                </button>
+                <button id="btnEditarAlerta" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" data-tooltip="Editar alerta seleccionada" data-tooltip-position="left" disabled>
+                    <i class="bi bi-pencil-square"></i> Editar
+                </button>
+                <button id="btnEliminarAlerta" class="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-lg font-medium hover:from-red-700 hover:to-red-800 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" data-tooltip="Eliminar alerta seleccionada" data-tooltip-position="left" disabled>
+                    <i class="bi bi-trash-fill"></i> Eliminar
+                </button>
+                <button class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-green-800 shadow-lg transition-all flex items-center gap-2" onclick="toggleModal('modalNuevaAlerta')" data-tooltip="Registrar nueva alerta en el sistema" data-tooltip-position="left">
+                    <i class="bi bi-plus-circle-fill"></i> Registrar Alerta
+                </button>
+            </div>
         </div>
 
         <!-- KPIs Dashboard -->
@@ -166,7 +202,7 @@
         <div class="bg-white shadow-lg rounded-xl p-6 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">
-                    <i class="bi bi-funnel mr-2 text-gray-600"></i>Filtros Avanzados
+                    <i class="bi bi-funnel mr-2 text-gray-600"></i>Buscar Alertas
                 </h2>
                 <button class="text-sm text-blue-600 hover:text-blue-700 font-medium" id="btnLimpiarFiltros">
                     <i class="bi bi-x-circle mr-1"></i>Limpiar filtros
@@ -175,7 +211,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="bi bi-search text-blue-600 mr-1"></i>Búsqueda
+                        <i class="bi bi-search text-blue-600 mr-1"></i>Buscar
                         <span class="tooltip-icon ml-1" data-tooltip="Buscar en descripción, niño o legajo" data-tooltip-type="info">?</span>
                     </label>
                     <input type="text" id="filtroBusqueda" placeholder="Buscar..." class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -229,7 +265,7 @@
             <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
                 <div class="flex items-center justify-between">
                     <h2 class="text-lg font-semibold text-gray-900">
-                        <i class="bi bi-table mr-2 text-gray-600"></i>Alertas Registradas
+                        <i class="bi bi-table mr-2 text-gray-600"></i>Listar Alertas
                     </h2>
                     <span class="text-sm text-gray-600">
                         Total: <span id="totalRegistros" class="font-semibold text-blue-600">0</span>
@@ -238,38 +274,50 @@
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-hash mr-1"></i>ID
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="bi bi-tag text-purple-600"></i>
+                                    <span>Tipo</span>
+                                </div>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-tag mr-1"></i>Tipo
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="bi bi-person text-blue-600"></i>
+                                    <span>Legajo</span>
+                                </div>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-person mr-1"></i>Niño/Legajo
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="bi bi-file-text text-green-600"></i>
+                                    <span>Descripción</span>
+                                </div>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-file-text mr-1"></i>Descripción
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="bi bi-exclamation-circle text-red-600"></i>
+                                    <span>Prioridad</span>
+                                </div>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-exclamation-circle mr-1"></i>Prioridad
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="bi bi-calendar-event text-orange-600"></i>
+                                    <span>Vencimiento</span>
+                                </div>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-calendar-event mr-1"></i>Vencimiento
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-flag mr-1"></i>Estado
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-gear mr-1"></i>Acciones
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="bi bi-flag text-indigo-600"></i>
+                                    <span>Estado</span>
+                                </div>
                             </th>
                         </tr>
                     </thead>
                     <tbody id="tablaAlertas" class="bg-white divide-y divide-gray-200">
                         <!-- Cargando... -->
                         <tr>
-                            <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
                                     <p class="text-sm">Cargando alertas...</p>
@@ -279,6 +327,9 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Controles de paginación -->
+            <div id="paginationControls"></div>
         </div>
             </div>
         </div>
@@ -294,7 +345,7 @@
                             <i class="bi bi-bell-fill text-2xl"></i>
                         </div>
                         <div>
-                            <h5 class="text-xl font-bold">Nueva Alerta</h5>
+                            <h5 class="text-xl font-bold">Registrar Alerta</h5>
                             <p class="text-blue-100 text-sm">Registrar nueva alerta en el sistema</p>
                         </div>
                     </div>
@@ -307,13 +358,13 @@
                 <!-- Legajo/Niño -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        <i class="bi bi-person-fill text-blue-600 mr-1"></i>Niño/Legajo *
-                        <span class="tooltip-icon ml-1" data-tooltip="Seleccione el niño al que pertenece esta alerta" data-tooltip-type="info">?</span>
+                        <i class="bi bi-person-fill text-blue-600 mr-1"></i>Legajo/NNA *
+                        <span class="tooltip-icon ml-1" data-tooltip="Seleccione el NNA/Legajo al que pertenece esta alerta" data-tooltip-type="info">?</span>
                     </label>
                     <select class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" name="legajoId" id="selectLegajo" required>
-                        <option value="">Seleccionar niño...</option>
+                        <option value="">Seleccionar Legajo/NNA...</option>
                     </select>
-                    <p class="text-xs text-gray-500 mt-1">Seleccione el niño asociado a esta alerta</p>
+                    <p class="text-xs text-gray-500 mt-1">Seleccione el NNA/Legajo asociado a esta alerta</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -497,6 +548,59 @@
         .modal-backdrop {
             backdrop-filter: blur(4px);
         }
+        
+        /* Estilos para selección de filas */
+        tbody tr { 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+        tbody tr.selected { 
+            background-color: #DBEAFE !important; 
+            border-left: 4px solid #3B82F6; 
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+        }
+        tbody tr:not(.selected):hover { 
+            background-color: #F9FAFB; 
+            border-left: 4px solid #E5E7EB;
+            transform: translateX(2px);
+        }
+        tbody tr:hover::after {
+            content: '👁️ Doble clic para ver detalle';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(79, 70, 229, 0.95);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+            opacity: 0;
+            animation: fadeIn 0.3s ease-in-out 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Mejoras visuales para badges */
+        .shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Line clamp para descripciones */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 
     <script>
@@ -506,11 +610,20 @@
         function toggleModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
+                const isHidden = modal.classList.contains('hidden');
                 modal.classList.toggle('hidden');
-                // Resetear formulario si se cierra
-                if (modal.classList.contains('hidden') && modalId === 'modalNuevaAlerta') {
-                    const form = document.getElementById('alertaForm');
-                    if (form) form.reset();
+                
+                // Controlar el scroll del body
+                if (isHidden) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                    
+                    // Resetear formulario si se cierra
+                    if (modalId === 'modalNuevaAlerta') {
+                        const form = document.getElementById('alertaForm');
+                        if (form) form.reset();
+                    }
                 }
             }
         }

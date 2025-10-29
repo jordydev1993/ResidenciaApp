@@ -1,55 +1,85 @@
-import { createAlerta, listTipoAlertas, listPrioridades, listEstadoAlertas } from '../api/alertasApi.js';
+import { createAlerta, updateAlerta, listTipoAlertas, listPrioridades, listEstadoAlertas } from '../api/alertasApi.js';
 import { listLegajos } from '../api/legajosApi.js';
 import { $, serializeForm, showToast } from '../utils/dom.js';
 
 /**
  * Carga todos los catálogos necesarios para el formulario
+ * OPTIMIZADO: Carga todo en paralelo con Promise.all
  */
 export async function loadCatalogos() {
     try {
-        // Cargar legajos (niños)
-        const legajos = await listLegajos();
+        // 🚀 Cargar todos los catálogos en paralelo
+        const [legajos, tipos, prioridades, estados] = await Promise.all([
+            listLegajos(),
+            listTipoAlertas(),
+            listPrioridades(),
+            listEstadoAlertas()
+        ]);
+        
+        // Procesar legajos
         const legajosArray = Array.isArray(legajos) ? legajos : (legajos?.items || []);
         const selectLegajo = $('#selectLegajo');
         if (selectLegajo) {
             selectLegajo.innerHTML = '<option value="">Seleccionar niño...</option>' + 
                 legajosArray.map(l => {
-                    const nombre = l.nombreNino || l.nombre || '';
-                    const apellido = l.apellidoNino || l.apellido || '';
-                    return `<option value="${l.id}">${nombre} ${apellido} - Legajo #${l.id}</option>`;
+                    // La vista VW_LegajoDetalle retorna: LegajoId, NinoNombre, NinoApellido, Dni
+                    const legajoId = l.LegajoId || l.legajoId || l.Id || l.id || '';
+                    const nombre = l.NinoNombre || l.ninoNombre || l.Nombre || l.nombre || '';
+                    const apellido = l.NinoApellido || l.ninoApellido || l.Apellido || l.apellido || '';
+                    const dni = l.Dni || l.dni || '';
+                    
+                    // Construir el texto del option
+                    const nombreCompleto = `${apellido} ${nombre}`.trim() || 'Sin nombre';
+                    const textoDni = dni ? `(DNI: ${dni})` : '(Sin DNI)';
+                    const textoLegajo = legajoId ? `- Legajo #${legajoId}` : '';
+                    
+                    return `<option value="${legajoId}">${nombreCompleto} ${textoDni} ${textoLegajo}</option>`;
                 }).join('');
         }
 
-        // Cargar tipos de alerta
-        const tipos = await listTipoAlertas();
+        // Procesar tipos de alerta
         const tiposArray = Array.isArray(tipos) ? tipos : (tipos?.items || []);
         const selectTipo = $('#selectTipoAlerta');
         if (selectTipo) {
             selectTipo.innerHTML = '<option value="">Seleccionar tipo...</option>' + 
-                tiposArray.map(t => `<option value="${t.id}">${t.nombre || t.descripcion}</option>`).join('');
+                tiposArray.map(t => {
+                    const nombre = t.Nombre || t.nombre || t.Descripcion || t.descripcion || 'Sin nombre';
+                    const id = t.Id || t.id;
+                    return `<option value="${id}">${nombre}</option>`;
+                }).join('');
         }
 
-        // Cargar prioridades
-        const prioridades = await listPrioridades();
+        // Procesar prioridades
         const prioridadesArray = Array.isArray(prioridades) ? prioridades : (prioridades?.items || []);
         const selectPrioridad = $('#selectPrioridad');
         if (selectPrioridad) {
             selectPrioridad.innerHTML = '<option value="">Seleccionar prioridad...</option>' + 
-                prioridadesArray.map(p => `<option value="${p.id}">${p.nombre || p.descripcion}</option>`).join('');
+                prioridadesArray.map(p => {
+                    const nombre = p.Nombre || p.nombre || p.Descripcion || p.descripcion || 'Sin nombre';
+                    const id = p.Id || p.id;
+                    return `<option value="${id}">${nombre}</option>`;
+                }).join('');
         }
 
-        // Cargar estados de alerta
-        const estados = await listEstadoAlertas();
+        // Procesar estados de alerta
         const estadosArray = Array.isArray(estados) ? estados : (estados?.items || []);
         const selectEstado = $('#selectEstadoAlerta');
         if (selectEstado) {
             // El estado inicial suele ser "Pendiente" por defecto
             selectEstado.innerHTML = '<option value="">Pendiente (por defecto)</option>' + 
-                estadosArray.map(e => `<option value="${e.id}">${e.nombre || e.descripcion}</option>`).join('');
+                estadosArray.map(e => {
+                    const nombre = e.Nombre || e.nombre || e.Descripcion || e.descripcion || 'Sin nombre';
+                    const id = e.Id || e.id;
+                    return `<option value="${id}">${nombre}</option>`;
+                }).join('');
         }
+
+        // Retornar los datos para reutilizar en page.js
+        return { tipos: tiposArray, prioridades: prioridadesArray, estados: estadosArray };
     } catch (error) {
         console.error('Error al cargar catálogos:', error);
         showToast('Error al cargar los catálogos');
+        return { tipos: [], prioridades: [], estados: [] };
     }
 }
 
@@ -123,26 +153,46 @@ export function bindAlertaForm(onCreated) {
                 EstadoId: payload.estadoAlertaId ? parseInt(payload.estadoAlertaId) : 1 // Pendiente por defecto
             };
             
-            // Solo incluir estado si se seleccionó uno específico
-            // Ya se incluye EstadoId arriba; no repetir claves con diferente casing
+            // Verificar si es edición o creación
+            const alertaId = payload.alertaId;
             
-            await createAlerta(alertaData);
+            if (alertaId) {
+                // Es edición
+                await updateAlerta(parseInt(alertaId), alertaData);
+                showToast('✅ Alerta actualizada exitosamente');
+            } else {
+                // Es creación
+                await createAlerta(alertaData);
+                showToast('✅ Alerta creada exitosamente');
+            }
             
-            showToast('✅ Alerta creada exitosamente');
             form.reset();
             
-            // Cerrar modal
+            // Resetear título del modal
             const modal = document.getElementById('modalNuevaAlerta');
+            const modalTitle = modal?.querySelector('h5');
+            if (modalTitle) {
+                modalTitle.textContent = 'Registrar Alerta';
+            }
+            
+            // Remover el input hidden de alertaId si existe
+            const inputId = form.querySelector('[name="alertaId"]');
+            if (inputId) {
+                inputId.remove();
+            }
+            
+            // Cerrar modal
             if (modal) {
                 modal.classList.add('hidden');
+                document.body.style.overflow = '';
             }
             
             // Callback para recargar datos
             if (onCreated) await onCreated();
             
         } catch (err) {
-            console.error('Error al crear alerta:', err);
-            showToast(`❌ Error al crear alerta: ${err.message || 'Error desconocido'}`);
+            console.error('Error al guardar alerta:', err);
+            showToast(`❌ Error al guardar alerta: ${err.message || 'Error desconocido'}`);
         }
     });
 }

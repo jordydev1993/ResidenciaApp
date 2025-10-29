@@ -3,178 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - Sistema de Residencias</title>
+    <title>Login - Sistema de Residencias</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="styles.css">
-    <script type="module" src="assets/js/auth/page.js" defer></script>
-    <meta name="color-scheme" content="light dark">
-    <meta name="description" content="Login y registro para el Sistema de Residencias">
+    <script type="module" src="assets/js/auth/login.js" defer></script>
     <style>
-    #appSidebar.collapsed { width: 64px; }
-    #appSidebar.collapsed .menu-text { display: none; }
-    #appSidebar.collapsed .submenu { display: none !important; }
-    #appSidebar .chevron { transition: transform 0.2s ease; }
-    #appSidebar .chevron.rotated { transform: rotate(90deg); }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #4ba25e 100%);
+            min-height: 100vh;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+
+        .input-focus:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
-<body>
-  <!--  <nav class="bg-blue-600 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="./" class="flex items-center text-xl font-semibold"><i class="bi bi-house-heart mr-2"></i>Sistema de Residencias</a>
-            <a class="border border-white text-white px-3 py-1 rounded-md hover:bg-blue-700" href="./legajos.html">Ir a Legajos</a>
-        </div>-->
-    </nav>
+<body class="flex items-center justify-center p-4">
+    <!-- Container Principal -->
+    <div class="container mx-auto max-w-md">
+        
+        <!-- Logo y Título -->
+        <div class="text-center mb-8">
+            <div class="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 p-4 rounded-2xl shadow-2xl mb-4">
+                <i class="bi bi-house-heart text-white text-5xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">Sistema de Residencias</h1>
+            <p class="text-blue-100">Gestión de NNA - Acceso al Sistema</p>
+        </div>
 
-    <!-- Hero Section con fondo degradado -->
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-                <!-- Sidebar simplificado solo con logo -->
-                <aside id="appSidebar" class="w-20 bg-white/80 backdrop-blur-sm border-r border-blue-200 rounded-l-2xl mr-8 p-4 h-[calc(100vh-4rem)] sticky top-8 overflow-hidden transition-all shadow-lg">
-                    <!-- Logo del Sistema centrado -->
-                    <div class="flex flex-col items-center justify-center h-full">
-                        <a href="./index.html" class="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-blue-50 transition-all duration-300 group">
-                            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                                <i class="bi bi-house-heart text-white text-2xl"></i>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-sm font-bold text-gray-900">Sistema</div>
-                                <div class="text-xs text-gray-500">Residencias</div>
-                            </div>
-                        </a>
+        <!-- Card de Login -->
+        <div class="glass-effect rounded-2xl shadow-2xl p-8">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Iniciar Sesión</h2>
+                <p class="text-sm text-gray-600">Ingrese sus credenciales para acceder</p>
+            </div>
+
+            <!-- Formulario de Login -->
+            <form id="loginForm" class="space-y-5">
+                <!-- Usuario -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-person-fill text-blue-600 mr-1"></i>Usuario o Email
+                    </label>
+                    <input 
+                        type="text" 
+                        id="usuario" 
+                        name="usuario" 
+                        class="input-focus w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                        placeholder="Ingrese su usuario o email"
+                        required
+                        autocomplete="username"
+                        autofocus>
+                </div>
+
+                <!-- Contraseña -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="bi bi-lock-fill text-blue-600 mr-1"></i>Contraseña
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="input-focus w-full border-2 border-gray-300 rounded-lg px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                            placeholder="Ingrese su contraseña"
+                            required
+                            autocomplete="current-password">
+                        <button 
+                            type="button" 
+                            id="togglePassword" 
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors">
+                            <i class="bi bi-eye text-xl" id="eyeIcon"></i>
+                        </button>
                     </div>
-                </aside>
-                
-                <!-- Contenido principal centrado -->
-                <div class="flex-1 flex items-center justify-center">
-                    <div class="w-full max-w-md">
-                        <!-- Header con título -->
-                        <div class="text-center mb-8">
-                            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl shadow-lg mb-4">
-                                <i class="bi bi-shield-lock text-white text-2xl"></i>
-                            </div>
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Bienvenido</h1>
-                            <p class="text-gray-600">Accede a tu cuenta o crea una nueva</p>
-                        </div>
-                        
-                        <!-- Card de autenticación -->
-                        <div class="bg-white/80 backdrop-blur-sm shadow-2xl rounded-2xl border border-white/20 overflow-hidden">
-                            <!-- Tabs mejorados -->
-                            <div class="flex bg-gray-50/50">
-                                <button class="flex-1 px-6 py-4 text-sm font-semibold text-blue-700 bg-white border-b-2 border-blue-600 transition-all duration-300" onclick="showTab('login')">
-                                    <i class="bi bi-box-arrow-in-right mr-2"></i>Iniciar Sesión
-                                </button>
-                                <button class="flex-1 px-6 py-4 text-sm font-semibold text-gray-600 hover:text-gray-800 hover:bg-white/50 transition-all duration-300" onclick="showTab('register')">
-                                    <i class="bi bi-person-plus mr-2"></i>Registrarse
-                                </button>
-                            </div>
-                            
-                            <!-- Formulario de Login -->
-                            <div id="tab-login" class="p-8">
-                                <form id="loginForm" class="space-y-6" novalidate>
-                                    <div class="space-y-2">
-                                        <label class="block text-sm font-semibold text-gray-700">
-                                            <i class="bi bi-envelope mr-1"></i>Email
-                                        </label>
-                                        <input type="email" name="email" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" placeholder="tu@email.com" required>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="block text-sm font-semibold text-gray-700">
-                                            <i class="bi bi-lock mr-1"></i>Contraseña
-                                        </label>
-                                        <input type="password" name="password" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" placeholder="••••••••" required>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <label class="flex items-center">
-                                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                            <span class="ml-2 text-sm text-gray-600">Recordarme</span>
-                                        </label>
-                                        <a href="#" class="text-sm text-blue-600 hover:text-blue-800 font-medium">¿Olvidaste tu contraseña?</a>
-                                    </div>
-                                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:ring-blue-200 transition-all duration-300 shadow-lg hover:shadow-xl">
-                                        <i class="bi bi-box-arrow-in-right mr-2"></i>Iniciar Sesión
-                                    </button>
-                                </form>
-                            </div>
-                            
-                            <!-- Formulario de Registro -->
-                            <div id="tab-register" class="p-8 hidden">
-                                <form id="registerForm" class="space-y-6" novalidate>
-                                    <div class="space-y-2">
-                                        <label class="block text-sm font-semibold text-gray-700">
-                                            <i class="bi bi-person mr-1"></i>Nombre completo
-                                        </label>
-                                        <input type="text" name="name" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" placeholder="Tu nombre completo" required>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="block text-sm font-semibold text-gray-700">
-                                            <i class="bi bi-envelope mr-1"></i>Email
-                                        </label>
-                                        <input type="email" name="email" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" placeholder="tu@email.com" required>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="block text-sm font-semibold text-gray-700">
-                                            <i class="bi bi-lock mr-1"></i>Contraseña
-                                        </label>
-                                        <input type="password" name="password" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" placeholder="••••••••" required>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="block text-sm font-semibold text-gray-700">
-                                            <i class="bi bi-lock-fill mr-1"></i>Confirmar contraseña
-                                        </label>
-                                        <input type="password" name="confirmPassword" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" placeholder="••••••••" required>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <input type="checkbox" class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500" required>
-                                        <span class="ml-2 text-sm text-gray-600">
-                                            Acepto los <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">términos y condiciones</a>
-                                        </span>
-                                    </div>
-                                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold py-3 rounded-xl hover:from-green-700 hover:to-green-800 focus:ring-4 focus:ring-green-200 transition-all duration-300 shadow-lg hover:shadow-xl">
-                                        <i class="bi bi-person-plus mr-2"></i>Crear cuenta
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        
-                        <!-- Footer con enlaces adicionales -->
-                        <div class="text-center mt-8">
-                            <p class="text-gray-500 text-sm">
-                                ¿Necesitas ayuda? <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Contacta soporte</a>
-                            </p>
-                        </div>
+                </div>
+
+                <!-- Recordar sesión -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="recordar" class="mr-2 rounded w-4 h-4 text-blue-600">
+                        <span class="text-sm text-gray-600">Recordarme</span>
+                    </label>
+                    <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                        ¿Olvidó su contraseña?
+                    </a>
+                </div>
+
+                <!-- Mensaje de error -->
+                <div id="errorMessage" class="hidden bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="bi bi-exclamation-triangle-fill text-red-500 text-xl mt-0.5 mr-3"></i>
+                        <p class="text-sm text-red-700 flex-1" id="errorText"></p>
+                    </div>
+                </div>
+
+                <!-- Botón de login -->
+                <button 
+                    type="submit" 
+                    id="btnLogin"
+                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span id="btnText">Iniciar Sesión</span>
+                    <div id="btnSpinner" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-2"></div>
+                </button>
+            </form>
+
+            <!-- Divisor -->
+            <div class="my-6 flex items-center">
+                <div class="flex-1 border-t border-gray-300"></div>
+                <span class="px-4 text-sm text-gray-500">Información</span>
+                <div class="flex-1 border-t border-gray-300"></div>
+            </div>
+
+            <!-- Información de acceso -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <i class="bi bi-info-circle-fill text-blue-600 text-xl mr-3 mt-0.5"></i>
+                    <div class="text-sm text-blue-900">
+                        <p class="font-semibold mb-1">Credenciales por defecto:</p>
+                        <p><strong>Usuario:</strong> admin</p>
+                        <p><strong>Contraseña:</strong> Admin123!</p>
+                        <p class="text-xs text-blue-700 mt-2">* Cambiar contraseña después del primer acceso</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="toastNotificacion" class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg border hidden z-50">
-        <div class="flex items-center p-4">
-            <i class="bi bi-info-circle-fill text-blue-500 mr-2"></i>
-            <div class="flex-1"><div class="font-semibold">Sistema</div><div id="toastMensaje" class="text-sm text-gray-600"></div></div>
-            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600" onclick="hideToast()"><i class="bi bi-x-lg"></i></button>
+        <!-- Footer -->
+        <div class="text-center mt-8 text-sm text-white">
+            <p>© 2025 Sistema de Residencias. Todos los derechos reservados.</p>
         </div>
     </div>
 
-    <script>
-        function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('collapsed'); }
-        function toggleSubmenu(id, btn) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.classList.toggle('hidden');
-            const icon = btn && btn.querySelector('.chevron');
-            if (icon) icon.classList.toggle('rotated');
-        }
-        function showTab(tab){
-            document.getElementById('tab-login').classList.toggle('hidden', tab !== 'login');
-            document.getElementById('tab-register').classList.toggle('hidden', tab !== 'register');
-        }
-        function hideToast(){ document.getElementById('toastNotificacion').classList.add('hidden'); }
-    </script>
+    <!-- Toast de notificaciones -->
+    <div id="toast" class="hidden fixed bottom-4 right-4 bg-white shadow-2xl rounded-xl border-l-4 z-50 min-w-[320px] animate-slide-in">
+        <div class="flex items-start p-4">
+            <div id="toastIcon" class="flex-shrink-0 mr-3 text-2xl"></div>
+            <div class="flex-1">
+                <div class="font-bold text-gray-900" id="toastTitle">Notificación</div>
+                <div id="toastMessage" class="text-sm text-gray-600 mt-1"></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
-
-

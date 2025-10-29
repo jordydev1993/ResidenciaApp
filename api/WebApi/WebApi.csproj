@@ -182,10 +182,13 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AlertaController.cs" />
+    <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\EstadoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LegajoController.cs" />
     <Compile Include="Controllers\NinoController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TutorController.cs" />
     <Compile Include="Controllers\TipoAlertaController.cs" />
     <Compile Include="Controllers\PrioridadController.cs" />
@@ -194,15 +197,21 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Handlers\SecurityHeadersHandler.cs" />
+    <Compile Include="Helpers\PasswordHelper.cs" />
+    <Compile Include="Helpers\TokenHelper.cs" />
     <Compile Include="Models\Alerta.cs" />
     <Compile Include="Models\Db.cs" />
     <Compile Include="Models\Estado.cs" />
     <Compile Include="Models\EstadoAlerta.cs" />
     <Compile Include="Models\Legajo.cs" />
+    <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\Nino.cs" />
     <Compile Include="Models\Prioridad.cs" />
+    <Compile Include="Models\Sesion.cs" />
     <Compile Include="Models\TipoAlerta.cs" />
     <Compile Include="Models\Tutor.cs" />
+    <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

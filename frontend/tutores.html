@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/tooltips.css">
     <link rel="stylesheet" href="styles.css">
+    <script type="module">
+        import { initAuth, handleLogout } from './assets/js/utils/authGuard.js';
+        initAuth();
+        
+        // Exponer handleLogout globalmente para el botón
+        window.handleLogout = handleLogout;
+    </script>
     <style>
     #appSidebar.collapsed { width: 64px; }
     #appSidebar.collapsed .menu-text { display: none; }
@@ -101,20 +108,45 @@
                         <i class="bi bi-gear"></i>
                         <span class="menu-text">Ajustes</span>
                     </a>
+                    <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-red-50 text-red-600 transition-colors">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="menu-text">Cerrar Sesión</span>
+                    </button>
                 </nav>
+
+                <!-- Información del Usuario -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-lg">
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-person-fill text-white text-xl"></i>
+                        </div>
+                        <div class="menu-text overflow-hidden">
+                            <div class="text-sm font-semibold text-gray-900 truncate" data-user-name>Usuario</div>
+                            <div class="text-xs text-gray-600 truncate" data-user-role>Rol</div>
+                        </div>
+                    </div>
+                </div>
             </aside>
                 <div class="flex-1">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900">
-                    <i class="bi bi-person-badge-fill mr-2 text-blue-600"></i>Gestión de Tutores
+                    <i class="bi bi-person-badge-fill mr-2 text-blue-600"></i>Gestionar Tutores
                 </h1>
                 <p class="text-sm text-gray-600 mt-1">Administración de tutores y contactos responsables</p>
             </div>
-            <button id="btnNuevoTutor" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-green-800 shadow-lg transition-all flex items-center gap-2">
-                <i class="bi bi-plus-circle-fill"></i> Nuevo Tutor
-            </button>
+            <div class="flex items-center gap-3">
+                <button id="btnEditarTutor" disabled class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </button>
+                <button id="btnEliminarTutor" disabled class="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-red-600">
+                    <i class="bi bi-trash-fill"></i> Eliminar
+                </button>
+                <button id="btnNuevoTutor" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-green-800 shadow-lg transition-all flex items-center gap-2">
+                    <i class="bi bi-plus-circle-fill"></i> Registrar Tutor
+                </button>
+            </div>
         </div>
 
         <!-- KPIs Rápidos -->
@@ -158,10 +190,10 @@
         <div class="bg-white shadow-lg rounded-xl p-6 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">
-                    <i class="bi bi-funnel mr-2 text-gray-600"></i>Filtros de Búsqueda
+                    <i class="bi bi-funnel mr-2 text-gray-600"></i>Filtrar Tutores
                 </h3>
                 <button id="btnLimpiarFiltros" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
-                    <i class="bi bi-x-circle"></i> Limpiar filtros
+                    <i class="bi bi-x-circle"></i> Limpiar Filtros
                 </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -197,7 +229,7 @@
             <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
                 <div class="flex items-center justify-between">
                     <h2 class="text-lg font-semibold text-gray-900">
-                        <i class="bi bi-table mr-2 text-gray-600"></i>Tutores Registrados
+                        <i class="bi bi-table mr-2 text-gray-600"></i>Listar Tutores
                     </h2>
                     <span class="text-sm text-gray-600">
                         Total: <span id="totalRegistrosTabla" class="font-semibold text-blue-600">0</span>
@@ -232,14 +264,11 @@
                                     <i class="bi bi-arrow-down-up text-gray-400 sort-icon"></i>
                                 </div>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                <i class="bi bi-gear mr-1"></i>Acciones
-                            </th>
                         </tr>
                     </thead>
                     <tbody id="tablaTutores" class="bg-white divide-y divide-gray-200">
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
                                     <p class="text-sm">Cargando tutores...</p>
@@ -408,6 +437,11 @@
         .overflow-x-auto::-webkit-scrollbar-track { background: #EDF2F7; border-radius: 4px; }
         .overflow-x-auto::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
         .overflow-x-auto::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
+        
+        /* Estilos para selección de filas */
+        tbody tr { cursor: pointer; transition: all 0.2s ease; }
+        tbody tr.selected { background-color: #DBEAFE !important; border-left: 4px solid #3B82F6; }
+        tbody tr:not(.selected):hover { background-color: #F9FAFB; }
     </style>
 
     <script>

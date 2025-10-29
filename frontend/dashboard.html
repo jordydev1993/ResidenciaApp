@@ -10,6 +10,18 @@
     <link rel="stylesheet" href="assets/css/tooltips.css">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script type="module">
+        import { initAuth, handleLogout } from './assets/js/utils/authGuard.js';
+        import { Session } from './assets/js/auth/session.js';
+        
+        // Inicializar autenticación
+        if (!initAuth()) {
+            // Si no está autenticado, initAuth redirige automáticamente
+        }
+        
+        // Exponer handleLogout globalmente
+        window.handleLogout = handleLogout;
+    </script>
     <script type="module" src="assets/js/dashboard/page.js" defer></script>
     <style>
     #appSidebar.collapsed { width: 64px; }
@@ -102,7 +114,24 @@
                         <i class="bi bi-gear"></i>
                         <span class="menu-text">Ajustes</span>
                     </a>
+                    <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-red-50 text-red-600 transition-colors">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="menu-text">Cerrar Sesión</span>
+                    </button>
                 </nav>
+
+                <!-- Información del Usuario -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-lg">
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-person-fill text-white text-xl"></i>
+                        </div>
+                        <div class="menu-text overflow-hidden">
+                            <div class="text-sm font-semibold text-gray-900 truncate" data-user-name>Usuario</div>
+                            <div class="text-xs text-gray-600 truncate" data-user-role>Rol</div>
+                        </div>
+                    </div>
+                </div>
             </aside>
             <div class="flex-1">
                 <div class="flex items-center justify-between mb-6">
@@ -198,8 +227,8 @@
                                 <i class="bi bi-person-plus-fill text-2xl text-blue-600 group-hover:text-white"></i>
                             </div>
                             <div>
-                                <div class="font-semibold text-gray-900">Nuevo Legajo</div>
-                                <div class="text-xs text-gray-500">Registrar niño</div>
+                                <div class="font-semibold text-gray-900">Registrar Legajo</div>
+                                <div class="text-xs text-gray-500">Registrar Legajo para NNA</div>
                             </div>
                         </a>
                         <a href="./alertas.html" class="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-all group">
@@ -207,8 +236,8 @@
                                 <i class="bi bi-bell-fill text-2xl text-red-600 group-hover:text-white"></i>
                             </div>
                             <div>
-                                <div class="font-semibold text-gray-900">Nueva Alerta</div>
-                                <div class="text-xs text-gray-500">Crear alerta</div>
+                                <div class="font-semibold text-gray-900">Crear Alerta</div>
+                                <div class="text-xs text-gray-500">Crear alerta para NNA/Legajo</div>
                             </div>
                         </a>
                         <a href="./reportes_legajos.html" class="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all group">

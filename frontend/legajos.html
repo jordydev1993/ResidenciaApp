@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/tooltips.css">
     <link rel="stylesheet" href="styles.css">
+    <script type="module">
+        import { initAuth, handleLogout } from './assets/js/utils/authGuard.js';
+        initAuth();
+        
+        // Exponer handleLogout globalmente para el botón
+        window.handleLogout = handleLogout;
+    </script>
     <script type="module" src="assets/js/legajos/page.js" defer></script>
     <style>
     /* Comportamiento de colapso para el sidebar estilo TailAdmin */
@@ -102,20 +109,45 @@
                         <i class="bi bi-gear"></i>
                         <span class="menu-text">Ajustes</span>
                     </a>
+                    <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-red-50 text-red-600 transition-colors">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="menu-text">Cerrar Sesión</span>
+                    </button>
                 </nav>
+
+                <!-- Información del Usuario -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-lg">
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="bi bi-person-fill text-white text-xl"></i>
+                        </div>
+                        <div class="menu-text overflow-hidden">
+                            <div class="text-sm font-semibold text-gray-900 truncate" data-user-name>Usuario</div>
+                            <div class="text-xs text-gray-600 truncate" data-user-role>Rol</div>
+                        </div>
+                    </div>
+                </div>
             </aside>
 
             <div class="flex-1">
                 <div class="flex items-center justify-between mb-6">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900">
-                            <i class="bi bi-person-lines-fill mr-2 text-blue-600"></i>Gestión de Legajos
+                            <i class="bi bi-person-lines-fill mr-2 text-blue-600"></i>Gestionar Legajos
                         </h1>
-                        <p class="text-sm text-gray-600 mt-1">Administración de legajos de niños, niñas y adolescentes</p>
+                        <p class="text-sm text-gray-600 mt-1">Administración de legajos de NNA's</p>
                     </div>
-                    <button id="btnNuevoLegajo" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-green-800 shadow-lg transition-all flex items-center gap-2">
-                        <i class="bi bi-plus-circle-fill"></i> Nuevo Legajo
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <button id="btnEditarLegajo" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </button>
+                        <button id="btnEliminarLegajo" class="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-lg font-medium hover:from-red-700 hover:to-red-800 shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="bi bi-trash-fill"></i> Eliminar
+                        </button>
+                        <button id="btnNuevoLegajo" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-green-800 shadow-lg transition-all flex items-center gap-2">
+                            <i class="bi bi-plus-circle-fill"></i> Registrar Legajo
+                        </button>
+                    </div>
                 </div>
 
                 <!-- KPIs Rápidos -->
@@ -170,10 +202,10 @@
                 <div class="bg-white shadow-lg rounded-xl p-6 mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">
-                            <i class="bi bi-funnel mr-2 text-gray-600"></i>Filtros de Búsqueda
+                            <i class="bi bi-funnel mr-2 text-gray-600"></i>Buscar Legajos
                         </h3>
                         <button id="btnLimpiarFiltros" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
-                            <i class="bi bi-x-circle"></i> Limpiar filtros
+                            <i class="bi bi-x-circle"></i> Limpiar Filtros
                         </button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -242,7 +274,7 @@
                                         <i class="bi bi-list-ul"></i> Ver Lista
                                     </button>
                                     <button type="button" id="btnCrearNinoRapido" class="text-green-600 hover:text-green-800 text-sm font-medium flex items-center gap-1" title="Crear nuevo niño">
-                                        <i class="bi bi-plus-circle-fill"></i> Crear Niño
+                                        <i class="bi bi-plus-circle-fill"></i> Crear NNA
                                     </button>
                                 </div>
                             </div>
@@ -269,7 +301,7 @@
                             <div id="listaNinosContainer" class="mt-3 border border-gray-300 rounded-lg overflow-hidden hidden">
                                 <div class="bg-gray-50 px-4 py-2 border-b border-gray-300 flex items-center justify-between">
                                     <span class="text-sm font-semibold text-gray-700">
-                                        <i class="bi bi-people-fill mr-1"></i>Niños Registrados (<span id="totalNinosLista">0</span>)
+                                        <i class="bi bi-people-fill mr-1"></i>NNA's Registrados (<span id="totalNinosLista">0</span>)
                                     </span>
                                     <button type="button" id="btnCerrarListaNinos" class="text-gray-500 hover:text-gray-700">
                                         <i class="bi bi-x-lg"></i>
@@ -377,7 +409,7 @@
                             <input type="hidden" name="tutorId" id="tutorId">
                         </div>
 
-                        <div>
+                        <div class="hidden">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                 <i class="bi bi-chat-left-text text-gray-600 mr-1"></i>Observaciones
                             </label>
@@ -392,7 +424,7 @@
                             <div class="flex items-start">
                                 <i class="bi bi-info-circle-fill text-green-500 mt-0.5 mr-2"></i>
                                 <div class="text-sm text-green-700">
-                                    <strong>Importante:</strong> Debe seleccionar un niño antes de guardar el legajo.
+                                    <strong>Importante:</strong> Debe seleccionar un NNA antes de guardar el legajo.
                                 </div>
                             </div>
                         </div>
@@ -416,7 +448,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-900">
-                                    <i class="bi bi-table mr-2 text-gray-600"></i>Legajos Registrados
+                                    <i class="bi bi-table mr-2 text-gray-600"></i>Listar Legajos
                                 </h2>
                                 <span class="text-sm text-gray-600">
                                     Total: <span id="totalRegistrosTabla" class="font-semibold text-blue-600">0</span>
@@ -447,14 +479,11 @@
                                     <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                                         <i class="bi bi-person-badge mr-1"></i>Tutor
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                        <i class="bi bi-gear mr-1"></i>Acciones
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="tablaLegajos" class="bg-white divide-y divide-gray-200">
                                 <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                    <td colspan="5" class="px-6 py-12 text-center text-gray-500">
                                         <div class="flex flex-col items-center justify-center">
                                             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
                                             <p class="text-sm">Cargando legajos...</p>
@@ -464,6 +493,9 @@
                             </tbody>
                         </table>
                     </div>
+                    
+                    <!-- Controles de paginación -->
+                    <div id="paginationControlsLegajos"></div>
                 </div>
             </div>
         </div>
@@ -557,8 +589,8 @@
                             <i class="bi bi-person-plus-fill text-2xl"></i>
                         </div>
                         <div>
-                            <h5 class="text-xl font-bold">Crear Niño Rápido</h5>
-                            <p class="text-blue-100 text-sm">Registre el niño y continúe con el legajo</p>
+                            <h5 class="text-xl font-bold">Crear NNA Rápido</h5>
+                            <p class="text-blue-100 text-sm">Registre el NNA y continúe con el legajo</p>
                         </div>
                     </div>
                     <button type="button" id="btnCerrarModalNino" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors">
@@ -605,7 +637,7 @@
                     <div class="flex items-start">
                         <i class="bi bi-info-circle-fill text-blue-500 mt-0.5 mr-2"></i>
                         <div class="text-sm text-blue-700">
-                            <strong>Nota:</strong> El niño se creará y se seleccionará automáticamente en el formulario de legajo.
+                            <strong>Nota:</strong> El NNA se creará y se seleccionará automáticamente en el formulario de legajo.
                         </div>
                     </div>
                 </div>
@@ -685,6 +717,11 @@
         .overflow-x-auto::-webkit-scrollbar-track { background: #EDF2F7; border-radius: 4px; }
         .overflow-x-auto::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
         .overflow-x-auto::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
+        
+        /* Estilos para selección de filas */
+        tbody tr { cursor: pointer; transition: all 0.2s ease; }
+        tbody tr.selected { background-color: #DBEAFE !important; border-left: 4px solid #3B82F6; }
+        tbody tr:not(.selected):hover { background-color: #F9FAFB; }
     </style>
 
     <script>

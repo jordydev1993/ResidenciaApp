@@ -4,6 +4,7 @@ import { listNinos } from '../api/ninoApi.js';
 import { listEstados } from '../api/catalogosApi.js';
 import { listTutores, createTutor } from '../api/tutorApi.js';
 import { upsertNino } from '../api/ninoApi.js';
+import { Pagination } from '../utils/pagination.js';
 
 let legajosData = [];
 let filteredData = [];
@@ -11,6 +12,8 @@ let ninosData = [];
 let estadosData = [];
 let tutoresData = [];
 let legajoToDelete = null;
+let selectedLegajo = null; // Legajo actualmente seleccionado
+let pagination = null; // Instancia de paginación
 let sortColumn = 'fechaIngreso'; // Columna de ordenamiento por defecto
 let sortDirection = 'desc'; // Dirección: 'asc' o 'desc'
 let ninoSeleccionado = null;
@@ -51,24 +54,13 @@ function rowTemplate(leg) {
     
     const nombreCompleto = apellido ? `${apellido}, ${nombre}` : nombre;
     
-    return `<tr class="hover:bg-gray-50">
+    return `<tr class="hover:bg-gray-50" data-id="${id}" data-nino-id="${ninoId}" data-estado-id="${estadoId}" data-tutor-id="${tutorId}">
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${dni}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${nombreCompleto}</td>
         <td class="px-6 py-4 whitespace-nowrap">${estadoBadge}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${fechaIngreso ? String(fechaIngreso).substring(0, 10) : ''}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
             ${tutorNombre ? `<span class="inline-flex items-center"><i class="bi bi-person-badge-fill text-purple-600 mr-1"></i>${tutorNombre}</span>` : '<span class="text-gray-400">Sin tutor</span>'}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <div class="flex space-x-2">
-                <button data-id="${id}" data-nino-id="${ninoId}" data-estado-id="${estadoId}" data-tutor-id="${tutorId}" 
-                        class="btn-edit text-blue-600 hover:text-blue-900" title="Editar">
-                    <i class="bi bi-pencil-square"></i>
-                </button>
-                <button data-id="${id}" class="btn-delete text-red-600 hover:text-red-900" title="Eliminar">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
         </td>
     </tr>`;
 }
@@ -79,6 +71,23 @@ async function load() {
         const items = Array.isArray(data) ? data : (data?.items || data);
         legajosData = items || [];
         filteredData = [...legajosData];
+        
+        // Inicializar paginación
+        if (!pagination) {
+            pagination = new Pagination({
+                data: filteredData,
+                itemsPerPage: 10,
+                containerId: 'paginationControlsLegajos',
+                onPageChange: (page, pageData) => {
+                    console.log(`📄 Página ${page} de legajos`);
+                    renderTable(pageData);
+                },
+                onItemsPerPageChange: (itemsPerPage) => {
+                    console.log(`📋 Items por página: ${itemsPerPage}`);
+                }
+            });
+        }
+        
         updateKPIs();
         applyFilters();
     } catch (err) {
@@ -136,18 +145,74 @@ function fillTutorSelector() {
     select.innerHTML = '<option value="">Sin tutor</option>' + options;
 }
 
-function renderTable() {
+/**
+ * Renderiza solo los datos de la página actual
+ */
+function renderTable(pageData = null) {
     const tableBody = $('#tablaLegajos');
     const contador = $('#totalRegistrosTabla');
     
-    if (!filteredData || !filteredData.length) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">No hay legajos registrados</td></tr>';
+    // Si se proporcionan datos de página, usarlos; si no, usar todos los filteredData
+    const dataToRender = pageData !== null ? pageData : filteredData;
+    
+    if (!dataToRender || !dataToRender.length) {
+        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">No hay legajos registrados</td></tr>';
         if (contador) contador.textContent = '0';
+        selectedLegajo = null;
+        updateActionButtons();
         return;
     }
     
-    renderHTML(tableBody, filteredData.map(rowTemplate).join(''));
+    renderHTML(tableBody, dataToRender.map(rowTemplate).join(''));
+    
+    // El contador siempre muestra el total filtrado, no solo la página actual
     if (contador) contador.textContent = filteredData.length;
+    
+    // Restaurar selección si existe
+    if (selectedLegajo) {
+        const id = selectedLegajo.Id ?? selectedLegajo.id ?? selectedLegajo.LegajoId;
+        const row = tableBody.querySelector(`tr[data-id="${id}"]`);
+        if (row) {
+            row.classList.add('selected');
+        } else {
+            selectedLegajo = null;
+            updateActionButtons();
+        }
+    }
+}
+
+function selectRow(id) {
+    selectedLegajo = legajosData.find(l => (l.Id ?? l.id ?? l.LegajoId) == id);
+    
+    // Actualizar clases visuales
+    const tableBody = $('#tablaLegajos');
+    tableBody.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+    const selectedRow = tableBody.querySelector(`tr[data-id="${id}"]`);
+    if (selectedRow) {
+        selectedRow.classList.add('selected');
+    }
+    
+    updateActionButtons();
+}
+
+function unselectRow() {
+    selectedLegajo = null;
+    const tableBody = $('#tablaLegajos');
+    tableBody?.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+    updateActionButtons();
+}
+
+function updateActionButtons() {
+    const btnEditar = $('#btnEditarLegajo');
+    const btnEliminar = $('#btnEliminarLegajo');
+    
+    if (selectedLegajo) {
+        btnEditar?.removeAttribute('disabled');
+        btnEliminar?.removeAttribute('disabled');
+    } else {
+        btnEditar?.setAttribute('disabled', 'disabled');
+        btnEliminar?.setAttribute('disabled', 'disabled');
+    }
 }
 
 function updateKPIs() {
@@ -205,7 +270,15 @@ function applyFilters() {
     });
     
     sortData();
-    renderTable();
+    
+    // Actualizar paginación con los nuevos datos filtrados
+    if (pagination) {
+        pagination.setData(filteredData);
+        renderTable(pagination.getCurrentPageData());
+        pagination.render();
+    } else {
+        renderTable();
+    }
 }
 
 function sortData() {
@@ -246,20 +319,45 @@ function bindEvents() {
     }
     eventsBindedOnce = true;
     
-    // Eventos de la tabla - usar event delegation en un contenedor que NO se re-renderiza
-    // En lugar de escuchar en #tablaLegajos (tbody), escuchamos en document para que persista
-    document.addEventListener('click', (e) => {
-        const btnEdit = e.target.closest('.btn-edit');
-        const btnDelete = e.target.closest('.btn-delete');
-        
-        if (btnEdit) {
-            const id = btnEdit.getAttribute('data-id');
-            editLegajo(id);
-        } else if (btnDelete) {
-            const id = btnDelete.getAttribute('data-id');
-            deleteLegajoConfirm(id);
-        }
-    });
+    // Eventos de selección de filas en la tabla
+    const tableBody = $('#tablaLegajos');
+    if (tableBody) {
+        tableBody.addEventListener('click', (e) => {
+            const row = e.target.closest('tr[data-id]');
+            if (row) {
+                const id = row.getAttribute('data-id');
+                
+                // Si la fila ya está seleccionada, deseleccionar
+                if (row.classList.contains('selected')) {
+                    unselectRow();
+                } else {
+                    selectRow(id);
+                }
+            }
+        });
+    }
+    
+    // Eventos de los botones del header
+    const btnEditar = $('#btnEditarLegajo');
+    const btnEliminar = $('#btnEliminarLegajo');
+    
+    if (btnEditar) {
+        btnEditar.addEventListener('click', () => {
+            if (selectedLegajo) {
+                const id = selectedLegajo.Id ?? selectedLegajo.id ?? selectedLegajo.LegajoId;
+                editLegajo(id);
+            }
+        });
+    }
+    
+    if (btnEliminar) {
+        btnEliminar.addEventListener('click', () => {
+            if (selectedLegajo) {
+                const id = selectedLegajo.Id ?? selectedLegajo.id ?? selectedLegajo.LegajoId;
+                deleteLegajoConfirm(id);
+            }
+        });
+    }
     
     // Búsqueda
     const inputBusqueda = $('#busquedaLegajos');

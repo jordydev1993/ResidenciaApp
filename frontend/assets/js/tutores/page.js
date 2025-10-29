@@ -4,6 +4,7 @@ import { listTutores, createTutor, updateTutor, deleteTutor } from '../api/tutor
 let tutoresData = [];
 let filteredData = [];
 let tutorToDelete = null;
+let selectedTutor = null; // Tutor actualmente seleccionado
 let sortColumn = 'apellido'; // Columna de ordenamiento por defecto
 let sortDirection = 'asc'; // Dirección: 'asc' o 'desc'
 
@@ -23,7 +24,7 @@ function rowTemplate(t) {
     const telefono = t.Telefono ?? t["Telefono"] ?? t[3] ?? '';
     const email = t.Email ?? t["Email"] ?? t[4] ?? '';
     
-    return `<tr class="hover:bg-gray-50">
+    return `<tr data-id="${id}" class="hover:bg-gray-50">
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${apellido}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">${nombre}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
@@ -31,16 +32,6 @@ function rowTemplate(t) {
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm">
             ${email ? `<a href="mailto:${email}" class="inline-flex items-center text-blue-600 hover:underline"><i class="bi bi-envelope-fill mr-1"></i>${email}</a>` : '<span class="text-gray-400">Sin email</span>'}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <div class="flex space-x-2">
-                <button data-id="${id}" class="btn-edit text-blue-600 hover:text-blue-900" title="Editar">
-                    <i class="bi bi-pencil-square"></i>
-                </button>
-                <button data-id="${id}" class="btn-delete text-red-600 hover:text-red-900" title="Eliminar">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
         </td>
     </tr>`;
 }
@@ -53,6 +44,7 @@ async function load() {
         filteredData = [...tutoresData];
         updateKPIs();
         applyFilters(); // Esto ya aplica sortData() y renderTable()
+        updateActionButtons(); // Inicializar estado de botones
     } catch (err) {
         showToast(`❌ Error al cargar: ${err.message}`);
     }
@@ -67,12 +59,86 @@ function renderTable() {
         tableBody.innerHTML = '';
         emptyState?.classList.remove('hidden');
         if (contador) contador.textContent = '0';
+        selectedTutor = null;
+        updateActionButtons();
         return;
     }
     
     emptyState?.classList.add('hidden');
     renderHTML(tableBody, filteredData.map(rowTemplate).join(''));
     if (contador) contador.textContent = filteredData.length;
+    bindRowSelection();
+}
+
+/**
+ * Selecciona una fila de tutor
+ */
+function selectRow(id) {
+    selectedTutor = filteredData.find(t => String(t.Id ?? t["Id"] ?? t[0]) === String(id));
+    
+    // Actualizar clases visuales
+    const tableBody = $('#tablaTutores');
+    if (tableBody) {
+        tableBody.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+        const selectedRow = tableBody.querySelector(`tr[data-id="${id}"]`);
+        if (selectedRow) {
+            selectedRow.classList.add('selected');
+        }
+    }
+    
+    updateActionButtons();
+}
+
+/**
+ * Deselecciona la fila actual
+ */
+function unselectRow() {
+    selectedTutor = null;
+    const tableBody = $('#tablaTutores');
+    if (tableBody) {
+        tableBody.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+    }
+    updateActionButtons();
+}
+
+/**
+ * Actualiza el estado de los botones de acción
+ */
+function updateActionButtons() {
+    const btnEditar = $('#btnEditarTutor');
+    const btnEliminar = $('#btnEliminarTutor');
+    
+    if (selectedTutor) {
+        btnEditar?.removeAttribute('disabled');
+        btnEliminar?.removeAttribute('disabled');
+    } else {
+        btnEditar?.setAttribute('disabled', 'true');
+        btnEliminar?.setAttribute('disabled', 'true');
+    }
+}
+
+/**
+ * Vincula eventos de selección de filas
+ */
+function bindRowSelection() {
+    const tableBody = $('#tablaTutores');
+    if (!tableBody) return;
+    
+    tableBody.querySelectorAll('tr[data-id]').forEach(row => {
+        row.addEventListener('click', (e) => {
+            // Ignorar clicks en enlaces
+            if (e.target.tagName === 'A' || e.target.closest('a')) return;
+            
+            const id = row.getAttribute('data-id');
+            
+            // Si la fila ya está seleccionada, deseleccionar
+            if (row.classList.contains('selected')) {
+                unselectRow();
+            } else {
+                selectRow(id);
+            }
+        });
+    });
 }
 
 function updateKPIs() {
@@ -178,23 +244,6 @@ function toggleSort(column) {
 }
 
 function bindEvents() {
-    // Delegación de eventos para la tabla (usando el tbody como delegador)
-    const tablaTutores = $('#tablaTutores');
-    if (tablaTutores) {
-        tablaTutores.addEventListener('click', async (e) => {
-            const btnEdit = e.target.closest('.btn-edit');
-            const btnDelete = e.target.closest('.btn-delete');
-            
-            if (btnEdit) {
-                const id = btnEdit.getAttribute('data-id');
-                editTutor(id);
-            } else if (btnDelete) {
-                const id = btnDelete.getAttribute('data-id');
-                deleteTutorConfirm(id);
-            }
-        });
-    }
-    
     // Eventos de ordenamiento en los encabezados
     document.querySelectorAll('th[data-sort]').forEach(th => {
         th.addEventListener('click', (e) => {
@@ -216,13 +265,41 @@ function bindEvents() {
     if (filtroEmail) filtroEmail.addEventListener('input', applyFilters);
     if (btnLimpiar) btnLimpiar.addEventListener('click', clearFilters);
     
-    // Eventos del modal
+    // Eventos de los botones del header
     const btnNuevo = $('#btnNuevoTutor');
+    const btnEditar = $('#btnEditarTutor');
+    const btnEliminar = $('#btnEliminarTutor');
+    
+    if (btnNuevo) {
+        btnNuevo.addEventListener('click', () => {
+            unselectRow(); // Limpiar selección al crear nuevo
+            showModal();
+        });
+    }
+    
+    if (btnEditar) {
+        btnEditar.addEventListener('click', () => {
+            if (selectedTutor) {
+                const id = selectedTutor.Id ?? selectedTutor["Id"] ?? selectedTutor[0];
+                editTutor(id);
+            }
+        });
+    }
+    
+    if (btnEliminar) {
+        btnEliminar.addEventListener('click', () => {
+            if (selectedTutor) {
+                const id = selectedTutor.Id ?? selectedTutor["Id"] ?? selectedTutor[0];
+                deleteTutorConfirm(id);
+            }
+        });
+    }
+    
+    // Eventos del modal
     const btnCerrar = $('#btnCerrarModal');
     const btnCancelar = $('#btnCancelarModal');
     const modalTutor = $('#modalTutor');
     
-    if (btnNuevo) btnNuevo.addEventListener('click', showModal);
     if (btnCerrar) btnCerrar.addEventListener('click', hideModal);
     if (btnCancelar) btnCancelar.addEventListener('click', hideModal);
     
@@ -320,6 +397,7 @@ async function confirmDelete() {
         await deleteTutor(tutorToDelete.id);
         showToast('✅ Tutor eliminado correctamente');
         hideConfirmModal();
+        unselectRow(); // Limpiar selección
         load();
     } catch (err) {
         showToast(`❌ Error al eliminar: ${err.message}`);
@@ -363,6 +441,7 @@ function bindForm() {
                 showToast('✅ Tutor creado correctamente');
             }
             hideModal();
+            unselectRow(); // Limpiar selección
             load();
         } catch (err) {
             showToast(`❌ Error al guardar: ${err.message}`);

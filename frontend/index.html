@@ -6,17 +6,51 @@
     <title>Sistema de Gestión de Residencias</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="assets/css/main.css">
+    <script type="module">
+        // Redirección automática según estado de autenticación
+        import { Session } from './assets/js/auth/session.js';
+        
+        if (Session.isAuthenticated()) {
+            // Si está autenticado, ir al dashboard
+            window.location.href = 'dashboard.html';
+        } else {
+            // Si NO está autenticado, ir al login
+            window.location.href = 'auth.html';
+        }
+    </script>
     <style>
-    #appSidebar.collapsed { width: 64px; }
-    #appSidebar.collapsed .menu-text { display: none; }
-    #appSidebar.collapsed .submenu { display: none !important; }
-    #appSidebar .chevron { transition: transform 0.2s ease; }
-    #appSidebar .chevron.rotated { transform: rotate(90deg); }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .loader {
+            text-align: center;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <div class="loader">
+        <div class="spinner"></div>
+        <p class="text-lg">Redirigiendo...</p>
+    </div>
     <main>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex">

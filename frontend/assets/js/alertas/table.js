@@ -89,7 +89,9 @@ function formatearFecha(fecha) {
 /**
  * Template para una fila de la tabla
  */
-function rowTemplate(a) {
+export function rowTemplate(a) {
+    // Extraer ID (puede venir como AlertaId, Id o id)
+    const alertaId = a.AlertaId ?? a.Id ?? a.id ?? '';
     const fechaVenc = a.FechaVencimiento || a.fechaVencimiento;
     const estadoNombre = a.Estado || a.estado;
     const prioridadNombre = a.Prioridad || a.prioridad;
@@ -100,68 +102,54 @@ function rowTemplate(a) {
     const vencimiento = getVencimientoStatus(fechaVenc, estadoNombre);
     const prioridadClass = getPrioridadBadge(prioridadNombre);
     const estadoClass = getEstadoBadge(estadoNombre);
-    const descripcionCorta = (a.Descripcion || a.descripcion || '').length > 60 
-        ? (a.Descripcion || a.descripcion || '').substring(0, 60) + '...' 
+    const descripcionCorta = (a.Descripcion || a.descripcion || '').length > 80 
+        ? (a.Descripcion || a.descripcion || '').substring(0, 80) + '...' 
         : (a.Descripcion || a.descripcion || '-');
 
     return `
-        <tr class="hover:bg-gray-50 transition-colors">
-            <td class="px-4 py-4 whitespace-nowrap">
-                <span class="text-sm font-semibold text-gray-900">#${a.Id ?? a.id ?? '-'}</span>
-            </td>
-            <td class="px-4 py-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getPrioridadBadge(tipoNombre)}">
-                    <i class="bi bi-tag-fill mr-1"></i>${tipoNombre ?? '-'}
+        <tr class="hover:bg-gray-50 transition-all duration-150 cursor-pointer" data-id="${alertaId}">
+            <td class="px-6 py-4">
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${getPrioridadBadge(tipoNombre)} shadow-sm">
+                    <i class="bi bi-tag-fill mr-1.5"></i>${tipoNombre ?? '-'}
                 </span>
             </td>
-            <td class="px-4 py-4">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-xs">
+            <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
                         ${(nombreNino || 'NN').trim()[0] || 'N'}
                     </div>
                     <div>
-                        <div class="text-sm font-medium text-gray-900">${nombreNino || '-'}</div>
-                        <div class="text-xs text-gray-500">Legajo #${legajoId}</div>
+                        <div class="text-sm font-semibold text-gray-900">${nombreNino || '-'}</div>
+                        <div class="text-xs text-gray-500 flex items-center gap-1">
+                            <i class="bi bi-file-text"></i>Legajo #${legajoId}
+                        </div>
                     </div>
                 </div>
             </td>
-            <td class="px-4 py-4">
-                <p class="text-sm text-gray-700" title="${a.descripcion || ''}">${descripcionCorta}</p>
+            <td class="px-6 py-4 max-w-md">
+                <p class="text-sm text-gray-700 line-clamp-2" title="${a.descripcion || ''}">${descripcionCorta}</p>
             </td>
-            <td class="px-4 py-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${prioridadClass}">
-                    <i class="bi bi-exclamation-circle-fill mr-1"></i>${a.prioridad ?? '-'}
+            <td class="px-6 py-4">
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${prioridadClass} shadow-sm">
+                    <i class="bi bi-exclamation-circle-fill mr-1.5"></i>${prioridadNombre ?? '-'}
                 </span>
             </td>
-            <td class="px-4 py-4">
-                <div class="space-y-1">
-                    <div class="text-sm font-medium text-gray-900">${formatearFecha(fechaVenc)}</div>
+            <td class="px-6 py-4">
+                <div class="space-y-1.5">
+                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                        <i class="bi bi-calendar3 text-gray-400"></i>${formatearFecha(fechaVenc)}
+                    </div>
                     ${vencimiento.texto ? `
-                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${vencimiento.clase}">
-                            <i class="${vencimiento.icono} mr-1"></i>${vencimiento.texto}
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold ${vencimiento.clase} shadow-sm">
+                            <i class="${vencimiento.icono} mr-1.5"></i>${vencimiento.texto}
                         </span>
                     ` : ''}
                 </div>
             </td>
-            <td class="px-4 py-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${estadoClass}">
-                    <i class="bi bi-flag-fill mr-1"></i>${estadoNombre ?? '-'}
+            <td class="px-6 py-4">
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${estadoClass} shadow-sm">
+                    <i class="bi bi-flag-fill mr-1.5"></i>${estadoNombre ?? '-'}
                 </span>
-            </td>
-            <td class="px-4 py-4 whitespace-nowrap">
-                <div class="flex items-center gap-2">
-                    <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" data-action="detail" data-id="${a.id ?? ''}" title="Ver detalle">
-                        <i class="bi bi-eye-fill"></i>
-                    </button>
-                    ${!String(estadoNombre || '').toLowerCase().includes('completada') ? `
-                        <button class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" data-action="complete" data-id="${a.Id ?? a.id ?? ''}" title="Marcar como completada">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </button>
-                    ` : ''}
-                    <button class="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" data-action="edit" data-id="${a.Id ?? a.id ?? ''}" title="Editar">
-                        <i class="bi bi-pencil-fill"></i>
-                    </button>
-                </div>
             </td>
         </tr>
     `;
@@ -181,11 +169,13 @@ export async function loadAlertas(params = {}) {
         if (!items.length) {
             renderHTML($('#tablaAlertas'), `
                 <tr>
-                    <td colspan="8" class="px-6 py-12 text-center">
+                    <td colspan="6" class="px-6 py-16 text-center">
                         <div class="flex flex-col items-center justify-center text-gray-500">
-                            <i class="bi bi-inbox text-6xl mb-4 text-gray-300"></i>
-                            <p class="text-lg font-medium">No se encontraron alertas</p>
-                            <p class="text-sm">Intente ajustar los filtros o crear una nueva alerta</p>
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="bi bi-inbox text-5xl text-gray-300"></i>
+                            </div>
+                            <p class="text-lg font-semibold text-gray-700 mb-2">No se encontraron alertas</p>
+                            <p class="text-sm text-gray-500">Intente ajustar los filtros o crear una nueva alerta</p>
                         </div>
                     </td>
                 </tr>
@@ -195,46 +185,20 @@ export async function loadAlertas(params = {}) {
         
         renderHTML($('#tablaAlertas'), items.map(rowTemplate).join(''));
         
-        // Manejar eventos de acciones
-        $('#tablaAlertas')?.addEventListener('click', async (e) => {
-            const btnComplete = e.target.closest('button[data-action="complete"]');
-            const btnDetail = e.target.closest('button[data-action="detail"]');
-            const btnEdit = e.target.closest('button[data-action="edit"]');
-            
-            if (btnComplete) {
-                const id = btnComplete.getAttribute('data-id');
-                if (confirm('¿Está seguro de marcar esta alerta como completada?')) {
-                    try {
-                        await completeAlerta(id);
-                        showToast('Alerta completada exitosamente');
-                        await loadAlertas(params);
-                        // Recargar stats
-                        if (window.loadStats) window.loadStats();
-                    } catch (err) {
-                        showToast(`Error al completar: ${err.message}`);
-                    }
-                }
-            }
-            
-            if (btnDetail) {
-                const id = btnDetail.getAttribute('data-id');
-                const alerta = items.find(a => a.id == id);
-                if (alerta) mostrarDetalleAlerta(alerta);
-            }
-            
-            if (btnEdit) {
-                const id = btnEdit.getAttribute('data-id');
-                showToast('Función de edición en desarrollo');
-                // TODO: Implementar edición
-            }
-        });
+        // Retornar los items para que puedan ser usados por page.js para la selección
+        return items;
     } catch (err) {
-        showToast(`Error al listar alertas: ${err.message}`);
+        showToast(`Error al listar alertas: ${err.message}`, 'error');
         renderHTML($('#tablaAlertas'), `
             <tr>
-                <td colspan="8" class="px-6 py-12 text-center text-red-500">
-                    <i class="bi bi-exclamation-triangle text-4xl mb-2"></i>
-                    <p>Error al cargar alertas: ${err.message}</p>
+                <td colspan="6" class="px-6 py-16 text-center">
+                    <div class="flex flex-col items-center justify-center text-red-500">
+                        <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-4">
+                            <i class="bi bi-exclamation-triangle text-5xl"></i>
+                        </div>
+                        <p class="text-lg font-semibold text-gray-900 mb-2">Error al cargar alertas</p>
+                        <p class="text-sm text-gray-600">${err.message}</p>
+                    </div>
                 </td>
             </tr>
         `);
