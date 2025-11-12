@@ -4,6 +4,7 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
+	//este codigo sirve para la gestion de prioridades de las alertas
 	public class PrioridadController : ApiController
 	{
 		// GET: api/Prioridad
